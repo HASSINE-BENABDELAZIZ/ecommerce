@@ -1,0 +1,17 @@
+
+.caret-4-asc {
+    border-bottom: .25rem solid #b6c1d2;
+    border-top: 0
+}
+
+.caret-4-desc {
+    border-top: .25rem solid #b6c1d2;
+    border-bottom: 0
+}
+  .caret-4-asc, .caret-4-desc, .order-4, .order-4:after {
+    border-right: .25rem solid transparent;
+    border-left: .25rem solid transparent;
+    margin-left: .5rem;
+    display: inline-block;
+    vertical-align: middle
+}

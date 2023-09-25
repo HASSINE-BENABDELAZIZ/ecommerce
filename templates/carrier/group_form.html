@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} STORELINKERS| change carrier {% endblock title %}
+{% load widget_tweaks %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{% url "index" %}">Home</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{% url "orders:carrier_list" %}">Carriers</a>
+            </li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Create</li>
+
+        </ol>
+    </nav>
+    <br>
+{% endblock %}
+
+{% block extrastyle %}
+    <style>
+        ul, li {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        form ul li {
+            margin: 10px 20px;
+
+        }
+
+        .row {
+            display: flex; /* equal height of the children */
+        }
+
+        .col {
+            flex: 1; /* additionally, equal width */
+
+            padding: 1em;
+        }
+
+    </style>
+{% endblock %}
+{% block content %}
+    <form id="myform" method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div>
+
+            <div class="row ">
+                <div class="col-lg-11 pe-lg-2">
+                    <div class="card mb-0">
+                        <div class="card-header">
+                            <h5 class="mb-0">Carrier Settings</h5>
+                        </div>
+                        <div class="card-body bg-light">
+                            <div class="row gx-2">
+                                <div class="col-sm-6 mb-3">
+
+                                    <label class="form-label">Name:</label>
+                                    {% render_field form.name class+="form-control" %}<br>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+
+                                    <label class="form-label">Carrier:</label>
+                                    {% render_field form.carrier class+="form-control" %}<br>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+
+                                    <label class="form-label">Account Number:</label>
+                                    {% render_field form.account_number class+="form-control" %}<br>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+
+                                    <label class="form-label">Address:</label>
+                                    {% render_field form.sender_address class+="form-control" %}<br>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+
+                                    <label class="form-label">Active :</label>
+                                    {% render_field form.active %}<br>
+                                </div>
+
+
+                                <div id="content">
+                                    {% include "carrier/form_choice.html" %}
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="" class="row">
+
+                <div class="col">
+                    <input type="submit" name="save_data" class="btn btn-primary" value="Create">
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+
+
+
+
+
+{% endblock %}
+{% block extrascript %}
+
+    <script>
+        $('#myform').submit(function (e) {
+
+            console.log("submitted");
+        });
+
+    </script>
+    <script>
+        function select_correct_carrier() {
+            let carrier = $("#id_carrier").val().toUpperCase();
+            history.pushState({"edit": "edit carrier"}, "FarEast", "?carrier=" + carrier)
+            let url = "{{ request.get_full_path }}"
+            $("tbody").attr("class", "changelist-form");
+            $(".changelist-form").hide();
+            $("#loader").show();
+            object_id = "{% if request.GET.id %}{{ request.GET.id }}{% endif %}"
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: {
+                    "carrier": carrier,
+                }
+
+            }).done(function (data) {
+                $("#content").html("")
+                $("#content").html(data)
+            })
+        }
+
+        $("#id_carrier").on("change", function () {
+            select_correct_carrier()
+        })
+        $(document).ready(function () {
+            select_correct_carrier()
+
+        })
+    </script>
+{% endblock %}

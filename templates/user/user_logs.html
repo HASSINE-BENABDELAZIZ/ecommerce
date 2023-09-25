@@ -1,0 +1,71 @@
+{% extends 'base.html'%}
+{% load static templatetags %}
+{% block title %} STORELINKERS| changes logs {% endblock  %}
+
+
+
+{% block extrastyle %}
+
+
+    <style>
+
+        /* Text alignment for body */
+        body {
+            text-align: center;
+        }
+
+        /* Styling h1 tag */
+        h1 {
+            color: green;
+            text-align: center;
+        }
+
+       </style>
+    <style>
+
+    .table {
+  display: table;
+  width: 100%;
+}
+
+    .page-item.active .page-link {
+    z-index: 1;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border-color: rgba(0, 0, 0, 0.4) !important;
+}
+    .page-link:hover {
+    color: #0056b3 !important;
+
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border-color: rgba(0, 0, 0, 0.4)!important;
+}
+    .btn:hover{
+        background:transparent
+    }
+    .rounded:placeholder-shown{
+        background:transparent
+    }
+            </style>
+{% endblock %}
+{% block content %}
+     <div >
+    <form method="get">
+   <div class=" ms-md-auto pe-md-3 d-flex align-items-center">
+ <div class="input-group">
+              <input type="text" class="form-control" placeholder="Type here..."  name="search" placeholder="Search" aria-label="Search" id="searchbar"
+    aria-describedby="search-addon">
+            </div>
+  <button type="submit" style="margin-left:1% " class="btn btn-secondary"  onclick=submitButtonClick(event)>Recherche</button>
+  </div>
+      </form>
+</div>
+    </div>
+            <div style="top: 100px; margin-top:15rem; margin-left: 25px; position: absolute" id='loader'></div>
+
+<br>
+  <div id="content">
+    {% include "user/user_logs_tr.html" %}
+    </div>
+
+{% endblock %}

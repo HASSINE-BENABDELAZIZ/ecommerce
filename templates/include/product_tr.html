@@ -1,0 +1,56 @@
+{% load i18n static %}
+
+{% if page_obj %}
+    <div class="table-responsive scrollbar">
+        <table class="table table-sm table-striped fs--1 mb-0 overflow-hidden">
+            <thead class="bg-200 text-900">
+            <tr>
+                <th class="sort pe-1 align-middle white-space-nowrap" data-sort="produit">Produit</th>
+                <th class="sort pe-1 align-middle white-space-nowrap pe-7" data-sort="fonction">Fonction</th>
+                <th class="sort pe-1 align-middle white-space-nowrap" data-sort="marque">Marque</th>
+                <th class="sort pe-1 align-middle white-space-nowrap" data-sort="prix">Prix</th>
+                <th class="pe-1 align-middle white-space-nowrap text-center"><span
+                        class="fas fa-ellipsis-h fs--1"></span>
+                </th>
+            </tr>
+            </thead>
+            <tbody class="list" id="table-produit-body">
+            {% for product in page_obj %}
+                <tr class="btn-reveal-trigger">
+                    <td class="produit align-middle white-space-nowrap py-2">
+                        <div class="d-flex d-flex align-items-center">
+                            <div class="avatar avatar-xl me-2">
+                                <div class="avatar-name rounded-circle">
+                                    <img src="{{ product.image_path }}" class="circular--landscape" alt="user1">
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="mb-0 fs--1">{{ product.name }}</h5>
+                                <p class="text-xs text-secondary mb-0">{{ product.sku }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="fonction align-middle py-2">
+                        <p class="text-xs font-weight-bold mb-0">Année:{{ product.year }}</p>
+                        <p class="text-xs font-weight-bold mb-0">Poids:{{ product.weight }}</p>
+                    </td>
+                    <td class="marque align-middle py-2"> {{ product.brand }}</td>
+                    <td class="prix py-2 align-middle fs-0 fw-medium">{{ product.price }} {{ product.currency }}</td>
+                    <td class="align-middle white-space-nowrap py-2 text-center">
+                        {% if 'products.add_product' in request.user.get_all_permissions %}
+                            <a href="{% url 'products:change_list' pk=product.id %}?category={{ product.category.id }}"
+                               class="btn btn-sm btn-falcon-secondary">
+                                <span class="far fa-edit"></span> Modifier
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <span class="text-muted fs--1 text-600 d-table mx-auto mt-3 mb-3">Aucune donnée disponible..</span>
+{% endif %}
+
+{% include 'pagination.html' %}

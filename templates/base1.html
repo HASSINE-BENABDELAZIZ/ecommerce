@@ -1,0 +1,480 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block head_meta_charset %}
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% endblock head_meta_charset %}
+    {% block head_favicon %}
+        <link rel="apple-touch-icon" sizes="76x76" href="{% static "images/storelinkers.png" %}">
+        <link rel="icon" type="image/png" href="{% static "images/storelinkers.png" %}">
+    {% endblock head_favicon %}
+
+    <title>
+        {% block title %} STORELINKERS {% endblock title %}
+    </title>
+    {% block extrastyle %}
+    {% endblock extrastyle %}
+    <!--     Fonts and icons     -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet"/>
+    <!-- Nucleo Icons -->
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <!-- CSS Files -->
+    <link id="pagestyle" href="{% static "assets/css/soft-ui-dashboard.css" %}" rel="stylesheet"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <style>
+        .sortable {
+            cursor: pointer;
+        }
+
+        .circular--landscape {
+            display: inline-block;
+            position: relative;
+            width: 50px;
+            height: 50px;
+            overflow: hidden;
+            border-radius: 50%;
+        }
+
+        .circular--landscape2 {
+            display: inline-block;
+            position: relative;
+            width: 25px;
+            height: 25px;
+            overflow: hidden;
+            border-radius: 50%;
+        }
+
+        .circular--landscape1 {
+            display: inline-block;
+            position: relative;
+            width: 75px;
+            height: 75px;
+            overflow: hidden;
+            border-radius: 50%;
+        }
+
+        {% if not request.user.is_light %}
+            .breadcrumb {
+                background-color: transparent;
+            }
+        {% endif %}
+
+
+        /* Styling modal */
+        .modal:before {
+            content: '';
+            display: inline-block;
+            height: 100%;
+            vertical-align: middle;
+        }
+
+        .modal-dialog {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .modal .modal-content {
+            padding: 20px 20px 20px 20px;
+            -webkit-animation-name: modal-animation;
+            -webkit-animation-duration: 0.5s;
+            animation-name: modal-animation;
+            animation-duration: 0.5s;
+        }
+
+        @-webkit-keyframes modal-animation {
+            from {
+                top: -100px;
+                opacity: 0;
+            }
+            to {
+                top: 0;
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+
+
+            margin-left: 250px;
+
+        }
+
+        @keyframes modal-animation {
+            from {
+                top: -100px;
+                opacity: 0;
+            }
+            to {
+                top: 0;
+                opacity: 1;
+            }
+        }
+
+
+        #loader {
+            background-image: url('https://files.3jms.com/images/loading-spinner.png');
+            background-size: cover;
+            position: relative;
+            width: 150px;
+            height: 150px;
+            left: 50%;
+            margin-left: -75px;
+            animation: spinner 2s linear infinite;
+        }
+
+        .highlight_table_color {
+            background-color: #ddd;
+        }
+
+        #loader:before {
+            position: absolute;
+            content: '';
+            display: block;
+            background-color: #ecf2f6;
+            opacity: 0.5;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: auto;
+            animation: spinner 2s linear infinite;
+        }
+
+
+    </style>
+</head>
+
+<body class="g-sidenav-show  bg-gray-100">
+{% if request.user.is_authenticated %}
+
+    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 "
+           id="sidenav-main">
+        <div class="sidenav-header">
+            <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
+               aria-hidden="true" id="iconSidenav"></i>
+            <a class="navbar-brand m-0" href="{% url 'index' %}">
+                <img src="{% static "images/logo.png" %}" class="navbar-brand-img h-100" alt="main_logo">
+                <span class="ms-1 font-weight-bold">Mati</span>
+            </a>
+        </div>
+        <hr class="horizontal dark mt-0">
+        <div class="collapse navbar-collapse  w-auto  max-height-vh-100 h-100" id="sidenav-collapse-main">
+            <ul class="navbar-nav">
+
+                {% if 'orders.view_order' in request.user.get_all_permissions %}
+                    <li class="nav-item">
+                        <a class="nav-link collapsed text-truncate" href="#submenu1" data-toggle="collapse"
+                           data-target="#submenu1"><i class="fa fa-first-order"></i> <span class="d-none d-sm-inline">Orders</span></a>
+                        <div class="collapse" id="submenu1" aria-expanded="false">
+                            <ul class="flex-column pl-2 nav">
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed text-truncate"
+                                       href="{% url "orders:order_list" %}?status=NO"><i class="fa fa-first-order"></i>
+                                        <span class="d-none d-sm-inline">Nouvelles commandes</span></a>
+
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed text-truncate" href="#submenu1_sub1"
+                                       data-toggle="collapse" data-target="#submenu1_sub1"><i
+                                            class="fa fa-first-order"></i> <span class="d-none d-sm-inline">Action requise</span></a>
+                                    <div class="collapse" id="submenu1_sub1" aria-expanded="false">
+                                        <ul class="flex-column pl-2 nav">
+                                            <li class="nav-item"><a class="nav-link py-0"
+                                                                    href="{% url "orders:order_list" %}?substatus=OC"><span>Rupture de stock</span></a>
+                                            </li>
+                                            <li class="nav-item"><a class="nav-link py-0"
+                                                                    href="{% url "orders:order_list" %}?substatus=UC"><span>Non classé </span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed text-truncate" href="#submenu1_sub2"
+                                       data-toggle="collapse" data-target="#submenu1_sub2"><i
+                                            class="fa fa-first-order"></i> <span
+                                            class="d-none d-sm-inline">Shipped</span></a>
+                                    <div class="collapse" id="submenu1_sub2" aria-expanded="false">
+                                        <ul class="flex-column pl-2 nav">
+                                            <li class="nav-item"><a class="nav-link py-0"
+                                                                    href="{% url "orders:order_list" %}?substatus=PT"><span>PRÉ TRANSIT</span></a>
+                                            </li>
+                                            <li class="nav-item"><a class="nav-link py-0"
+                                                                    href="{% url "orders:order_list" %}?substatus=IT"><span>EN TRANSIT</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed text-truncate"
+                                       href="{% url "orders:order_list" %}?status=D"><i class="fa fa-first-order"></i>
+                                        <span class="d-none d-sm-inline">Complété</span></a>
+
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed text-truncate"
+                                       href="{% url "orders:order_list" %}?status=F"><i class="fa fa-first-order"></i>
+                                        <span class="d-none d-sm-inline">Problèmes</span></a>
+
+                                </li>
+                            </ul>
+                        </div>
+
+
+                    </li>
+                {% endif %}
+                {% if 'products.view_product' in request.user.get_all_permissions %}
+
+                    <li class="nav-item">
+                        <a class="nav-link  text-truncate" href="{% url "products:product_list" %}"><i
+                                class="fa fa-product-hunt"></i> <span class="d-none d-sm-inline">Products</span></a>
+                    </li>
+                {% endif %}
+                {% if 'accounts.view_user' in request.user.get_all_permissions %}
+
+                    <li class="nav-item">
+                        <a class="nav-link collapsed text-truncate" href="#submenu3" data-toggle="collapse"
+                           data-target="#submenu3"><i class="fa fa-user"></i> <span
+                                class="d-none d-sm-inline">Accounts</span></a>
+                        <div class="collapse" id="submenu3" aria-expanded="false">
+                            <ul class="flex-column pl-2 nav">
+                                <li class="nav-item"><a class="nav-link py-0"
+                                                        href="{% url "accounts:user_list" %}"><span>Utilisateurs</span></a>
+                                </li>
+                                {% if 'auth.view_group' in request.user.get_all_permissions %}
+
+                                    <li class="nav-item"><a class="nav-link py-0"
+                                                            href="{% url "accounts:group_list" %}"><span>Groups</span></a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </li>
+                {% endif %}
+                {% if 'orders.view_carrier' in request.user.get_all_permissions %}
+
+                    <li class="nav-item">
+                        <a class="nav-link collapsed text-truncate" href="#submenu_logistics" data-toggle="collapse"
+                           data-target="#submenu_logistics"><i class="fas fa-shipping-fast"></i> <span
+                                class="d-none d-sm-inline">Logistics</span></a>
+                        <div class="collapse" id="submenu_logistics" aria-expanded="false">
+                            <ul class="flex-column pl-2 nav">
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed text-truncate"
+                                       href="{% url "orders:carrier_list" %}"><i class="fa fa-first-order"></i> <span
+                                            class="d-none d-sm-inline">Carriers</span></a>
+
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed text-truncate"
+                                       href="{% url "orders:address_list" %}?status=NO"><i
+                                            class="fa fa-first-order"></i> <span
+                                            class="d-none d-sm-inline">Adresses</span></a>
+
+                                </li>
+
+                            </ul>
+                        </div>
+                    </li>
+                {% endif %}
+            </ul>
+            <div class=" collapse show bg-light" id="sidebar">
+                <ul class="nav flex-column flex-nowrap ">
+
+
+                </ul>
+            </div>
+
+
+        </div>
+
+        </div>
+
+
+    </aside>
+{% endif %}
+<main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg ">
+    <!-- Navbar -->
+    {% if request.user.is_authenticated %}
+
+        <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur"
+             navbar-scroll="true">
+            <div class="container-fluid py-1 px-3">
+                {% block breadcrumbs %}
+
+                    {% include "breadcrumb.html" %}
+                {% endblock breadcrumbs %}
+
+                <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                    <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Type here...">
+                        </div>
+                    </div>
+                    <ul class="navbar-nav  justify-content-end">
+
+                        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                            <a href="javascript:" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                                <div class="sidenav-toggler-inner">
+                                    <i class="sidenav-toggler-line"></i>
+                                    <i class="sidenav-toggler-line"></i>
+                                    <i class="sidenav-toggler-line"></i>
+                                </div>
+                            </a>
+                        </li>
+
+                        <li class="nav-item dropdown pe-2 d-flex align-items-center">
+                            <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Paramètres
+                            </a>
+                            <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4"
+                                aria-labelledby="dropdownMenuButton">
+                                <li class="mb-2">
+                                    <div class="d-flex py-1">
+
+                                        <h6 class="text-sm font-weight-normal mb-1">
+                                            <a class="dropdown-item"
+                                               href="{% url 'accounts:change_list' pk=request.user.id %}">Profile</a>
+                                        </h6>
+
+                                    </div>
+                                    </a>
+                                </li>
+
+                                <li class="mb-2">
+                                    <div class="d-flex py-1">
+
+                                        <h6 class="text-sm font-weight-normal mb-1">
+                                            <a class="dropdown-item" href="{% url 'logout' %}">Se déconnecter</a>
+                                        </h6>
+
+                                    </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- End Navbar -->
+    {% endif %}
+    <div style="overflow: auto; overflow-x: hidden;" class="box">
+        {% if messages %}
+
+
+            <div style="max-width:80%; margin-left:10%;" class="alert alert-info">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </div>
+
+        {% endif %}
+        {% block content %} {% endblock %}
+    </div>
+
+</main>
+
+<div class="fixed-plugin">
+
+    <div class="card shadow-lg ">
+        <div class="card-header pb-0 pt-3 ">
+            <div class="float-start">
+                <h5 class="mt-3 mb-0">Configurateur d'interface utilisateur logicielle</h5>
+                <p>Voir nos options de tableau de bord.</p>
+            </div>
+            <div class="float-end mt-4">
+                <button class="btn btn-link text-dark p-0 fixed-plugin-close-button">
+                    <i class="fa fa-close"></i>
+                </button>
+            </div>
+            <!-- End Toggle Button -->
+        </div>
+        <hr class="horizontal dark my-1">
+        <div class="card-body pt-sm-3 pt-0">
+            <!-- Sidebar Backgrounds -->
+            <div>
+                <h6 class="mb-0">Couleurs de la barre latérale</h6>
+            </div>
+            <a href="javascript:void(0)" class="switch-trigger background-color">
+                <div class="badge-colors my-2 text-start">
+                    <span class="badge filter bg-gradient-primary active" data-color="primary"
+                          onclick="sidebarColor(this)"></span>
+                    <span class="badge filter bg-gradient-dark" data-color="dark" onclick="sidebarColor(this)"></span>
+                    <span class="badge filter bg-gradient-info" data-color="info" onclick="sidebarColor(this)"></span>
+                    <span class="badge filter bg-gradient-success" data-color="success"
+                          onclick="sidebarColor(this)"></span>
+                    <span class="badge filter bg-gradient-warning" data-color="warning"
+                          onclick="sidebarColor(this)"></span>
+                    <span class="badge filter bg-gradient-danger" data-color="danger"
+                          onclick="sidebarColor(this)"></span>
+                </div>
+            </a>
+            <!-- Sidenav Type -->
+            <div class="mt-3">
+                <h6 class="mb-0">Type de navigation latérale</h6>
+                <p class="text-sm">Choisissez entre 2 types de sidenav différents.</p>
+            </div>
+            <div class="d-flex">
+                <button class="btn bg-gradient-primary w-100 px-3 mb-2 active" data-class="bg-transparent"
+                        onclick="sidebarType(this)">Transparent
+                </button>
+                <button class="btn bg-gradient-primary w-100 px-3 mb-2 ms-2" data-class="bg-white"
+                        onclick="sidebarType(this)">Blanc
+                </button>
+            </div>
+            <p class="text-sm d-xl-none d-block mt-2">Vous pouvez changer le type de sidenav uniquement sur la vue du bureau.</p>
+            <!-- Navbar Fixed -->
+            <div class="mt-3">
+                <h6 class="mb-0">Barre de navigation fixe</h6>
+            </div>
+            <div class="form-check form-switch ps-0">
+                <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed"
+                       onclick="navbarFixed(this)">
+            </div>
+        </div>
+    </div>
+</div>
+<!--   Core JS Files   -->
+{% block extrascript %}
+
+{% endblock extrascript %}
+<script>
+    $(function () {
+
+        $('.list-group-item').on('click', function () {
+            $('.glyphicon', this)
+                .toggleClass('glyphicon-chevron-right')
+                .toggleClass('glyphicon-chevron-down');
+        });
+
+    });
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="{% static "assets/js/core/popper.min.js" %}"></script>
+<script src="{% static "assets/js/core/bootstrap.min.js" %}"></script>
+<script src="{% static "assets/js/plugins/perfect-scrollbar.min.js" %}"></script>
+<script src="{% static "assets/js/plugins/smooth-scrollbar.min.js" %}"></script>
+<script src="{% static "assets/js/plugins/chartjs.min.js" %}"></script>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="{% static "assets/js/soft-ui-dashboard.min.js" %}"></script>
+</body>
+
+</html>

@@ -1,0 +1,17 @@
+<Vista-Wine-Spirits-Products-Feed>
+    {% for product in data %}
+    <product>
+        <product-name>{{ product.name}}</product-name>
+        <price>{{ product.price}}</price>
+        <currency>{{ product.currency}}</currency>
+        <bottles size="{{ product.bottle_size}} ml">{{ product.name}}</bottles>
+        <inventory-count>{{ product.stock}}</inventory-count>
+        <product-image>{{ product.image_url}}</product-image>
+        <product-id>{{ product.sku}}</product-id>
+        <extras>
+            <product-id>{{ product.sku}}</product-id>
+            <wine-name>{{ product.name}}</wine-name>
+        </extras>
+    </product>
+{% endfor %}
+</Vista-Wine-Spirits-Products-Feed>

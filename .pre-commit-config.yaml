@@ -1,0 +1,7 @@
+repos:
+    -   repo: https://github.com/gvanderest/pylama-pre-commit
+        rev: 0.1.2
+        hooks:
+            -   id: pylama
+                exclude: '.md'
+                args: ['--options', 'pylama.ini']

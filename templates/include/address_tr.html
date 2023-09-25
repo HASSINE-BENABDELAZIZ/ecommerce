@@ -1,0 +1,49 @@
+{% load i18n static %}
+  <div class="table-responsive scrollbar">
+    <table class="table table-bordered table-striped fs--1 mb-0">
+      <thead class="bg-200 text-900">
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Adresse complète</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">zipcode</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ville</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"> État</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Téléphone</th>
+                        <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody class="list">
+                    {% for address in page_obj %}
+
+                    <tr>
+                    <td>
+                        {{ address.address_str }}
+                    </td>
+                    <td>
+                        {{ address.zipcode }}
+                    </td>
+                     <td>
+                        {{ address.cite }}
+                    </td>
+                    <td>
+                     <p class="text-xs font-weight-bold mb-0">{{ address.state }}</p>
+                      </td>
+                         <td>
+                      {{ address.telephone }}
+                    </td>
+                      <td class="align-middle">
+                     {% if 'orders.change_address' in request.user.get_all_permissions %}
+
+                        <a href="{% url 'orders:change_address' pk=address.id %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                          Edit
+                        </a>
+                          {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+<br>
+    <div class="pagination">
+        {% include "pagination.html" %}
+    </div>
+  </div>

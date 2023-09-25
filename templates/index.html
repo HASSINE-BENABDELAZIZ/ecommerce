@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extrastyle %}
+<link href="{% static 'vendors/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
+{% endblock %}
+{% block extrascript %}
+    <script src="{% static 'vendors/typed.js/typed.js' %}"></script>
+
+{% endblock %}
+{% block content %}
+    {% if not request.user.is_authenticated %}
+    <nav class="navbar navbar-standard navbar-expand-lg fixed-top navbar-dark" data-navbar-darken-on-scroll="data-navbar-darken-on-scroll">
+   <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+         <span class="text-white dark__text-white">STORELINKERS</span>
+      </a>
+      <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarStandard" aria-controls="navbarStandard" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse scrollbar" id="navbarStandard">
+         <ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
+           <li class="nav-item"><a class="nav-link" role="button" href="#">A propos</a></li>
+           <li class="nav-item"><a class="nav-link" role="button" href="#">Contactez-nous</a></li>
+         </ul>
+         <ul class="navbar-nav ms-auto align-items-center">
+         <!--  <li class="nav-item dropdown">
+               <a class="nav-link" href="{% url 'register' %}" aria-haspopup="true" aria-expanded="false">S’enregistrer</a>
+            </li> -->
+            <li class="nav-item dropdown">
+               <a class="nav-link " href="{% url 'login' %}" aria-haspopup="true" aria-expanded="false">Devenir partenaire</a>
+            </li>
+            <li class="nav-item">
+               <div class="theme-control-toggle fa-icon-wait px-2">
+                  <input class="form-check-input ms-0 theme-control-toggle-input" id="themeControlToggle" type="checkbox" data-theme-control="theme" value="dark">
+                  <label class="mb-0 theme-control-toggle-label theme-control-toggle-light" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="" data-bs-original-title="Switch to light theme" aria-label="Switch to light theme"><svg class="svg-inline--fa fa-sun fa-w-16 fs-0" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sun" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M256 160c-52.9 0-96 43.1-96 96s43.1 96 96 96 96-43.1 96-96-43.1-96-96-96zm246.4 80.5l-94.7-47.3 33.5-100.4c4.5-13.6-8.4-26.5-21.9-21.9l-100.4 33.5-47.4-94.8c-6.4-12.8-24.6-12.8-31 0l-47.3 94.7L92.7 70.8c-13.6-4.5-26.5 8.4-21.9 21.9l33.5 100.4-94.7 47.4c-12.8 6.4-12.8 24.6 0 31l94.7 47.3-33.5 100.5c-4.5 13.6 8.4 26.5 21.9 21.9l100.4-33.5 47.3 94.7c6.4 12.8 24.6 12.8 31 0l47.3-94.7 100.4 33.5c13.6 4.5 26.5-8.4 21.9-21.9l-33.5-100.4 94.7-47.3c13-6.5 13-24.7.2-31.1zm-155.9 106c-49.9 49.9-131.1 49.9-181 0-49.9-49.9-49.9-131.1 0-181 49.9-49.9 131.1-49.9 181 0 49.9 49.9 49.9 131.1 0 181z"></path></svg><!-- <span class="fas fa-sun fs-0"></span> Font Awesome fontawesome.com --></label>
+                  <label class="mb-0 theme-control-toggle-label theme-control-toggle-dark" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="" data-bs-original-title="Switch to dark theme" aria-label="Switch to dark theme"><svg class="svg-inline--fa fa-moon fa-w-16 fs-0" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="moon" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M283.211 512c78.962 0 151.079-35.925 198.857-94.792 7.068-8.708-.639-21.43-11.562-19.35-124.203 23.654-238.262-71.576-238.262-196.954 0-72.222 38.662-138.635 101.498-174.394 9.686-5.512 7.25-20.197-3.756-22.23A258.156 258.156 0 0 0 283.211 0c-141.309 0-256 114.511-256 256 0 141.309 114.511 256 256 256z"></path></svg><!-- <span class="fas fa-moon fs-0"></span> Font Awesome fontawesome.com --></label>
+               </div>
+            </li>
+         </ul>
+      </div>
+   </div>
+</nav>
+      <section class="py-6 overflow-hidden light" id="banner" style="height: 110vh">
+   <div class="bg-holder overlay" style="background: url({% static 'assets/img/illustrations/truck-2677373_1920.jpg' %}) center bottom;">
+   </div>
+   <div class="container">
+      <div class="row flex-center pt-8 pt-lg-10 pb-lg-9 pb-xl-5">
+         <div class="col-md-11 col-lg-8 col-xl-5 pb-7 pb-xl-9 text-center text-xl-start">
+             <h1 class="text-white fw-light">Gére Votre </br>E-Commerce</h1>
+            <p class="lead text-white opacity-75">Store Linkers première solution vous aide à gérer les livraison ,emballages et gestion de stock . En offrant gratuité de service MARKETING et création de site web.</p><a class="btn btn-outline-light border-2 rounded-pill btn-lg mt-4 fs-0 py-2" href="#services">Réserver Démonstration<span class="fas fa-play ms-2" data-fa-transform="shrink-6 down-1"></span></a>
+         </div>
+      </div>
+   </div>
+</section>
+   <section class="py-3 bg-light shadow-sm">
+      <div class="container">
+         <div class="row flex-center">
+            <div class="col-3 col-sm-auto my-1 my-sm-3 px-card"><img class="landing-cta-img" height="40" src="{% static 'assets/img/logos/aramex.jpg' %}" alt="" /></div>
+            <div class="col-3 col-sm-auto my-1 my-sm-3 px-card"><img class="landing-cta-img" height="45" src="{% static 'assets/img/logos/R.png' %}" alt="" /></div>
+            <div class="col-3 col-sm-auto my-1 my-sm-3 px-card"><img class="landing-cta-img" height="30" src="{% static 'assets/img/logos/beasy_parcel.png' %}" alt="" /></div>
+            <div class="col-3 col-sm-auto my-1 my-sm-3 px-card"><img class="landing-cta-img" height="30" src="{% static 'assets/img/logos/fastway.png' %}" alt="" /></div>
+            <div class="col-3 col-sm-auto my-1 my-sm-3 px-card"><img class="landing-cta-img" height="35" src="{% static 'assets/img/logos/th-removebg-preview.png' %}" alt="" /></div>
+            <div class="col-3 col-sm-auto my-1 my-sm-3 px-card"><img class="landing-cta-img" height="40" src="{% static 'assets/img/logos/OIP-removebg-preview.png' %}" alt="" /></div>
+            <div class="col-3 col-sm-auto my-1 my-sm-3 px-card"><img class="landing-cta-img" height="40" src="{% static 'assets/img/logos/parcel-removebg-preview.png' %}" alt="" /></div>
+         </div>
+      </div>
+   </section>
+   <section>
+      <div class="container">
+      <div class="row flex-center"  id="services">
+         <div class="col-md col-lg-5 col-xl-4 ps-lg-6"><img class="img-fluid px-6 px-md-0" src="{% static 'assets/img/illustrations/undraw_business_deal_re_up4u.svg' %}" alt="" /></div>
+         <div class="col-md col-lg-5 col-xl-4 mt-4 mt-md-0">
+            <h5 class="text-danger"><span class="far fa-lightbulb me-2"></span>PLAN</h5>
+            <h3>Connexion</h3>
+            <p>Vous allez brancher votre magasin à notre plateforme. Envoyez-nous votre stock et annoncez les produits à venir. Nous nous occuperons de leur stockage optimal,  c'est l'une de nos spécialités</p>
+         </div>
+      </div>
+      <div class="row flex-center mt-7">
+         <div class="col-md col-lg-5 col-xl-4 pe-lg-6 order-md-2"><img class="img-fluid px-6 px-md-0" src="{% static 'assets/img/illustrations/undraw_team_collaboration_re_ow29.svg' %}" alt="" /></div>
+         <div class="col-md col-lg-5 col-xl-4 mt-4 mt-md-0">
+            <h5 class="text-info"> <span class="far fa-paper-plane me-2"></span>Création</h5>
+            <h3>Création</h3>
+            <p>Préparation, emballage et expédition de toutes les commandes reçues directement à partir de notre propre entrepôt. Nous préparons, emballons et expédions vos commandes le jour même, pour une livraison à vos clients dès le lendemain.</p>
+         </div>
+      </div>
+      <div class="row flex-center mt-7">
+         <div class="col-md col-lg-5 col-xl-4 ps-lg-6"><img class="img-fluid px-6 px-md-0" src="{% static 'assets/img/illustrations/undraw_proud_coder_re_exuy.svg' %}" alt="" /></div>
+         <div class="col-md col-lg-5 col-xl-4 mt-4 mt-md-0">
+            <h5 class="text-success"><span class="far fa-object-ungroup me-2"></span>NOTIFICATIONS</h5>
+            <h3>Augmentation</h3>
+            <p>Nous pouvons vous aider à établir vos priorités et à réorganiser vos activités, tout en vous offrant gratuitement des services de marketing, de conseil et de création de sites web.
+            </p>
+         </div>
+      </div>
+           <div class="row flex-center mt-7">
+         <div class="col-md col-lg-5 col-xl-4 pe-lg-6 order-md-2"><img class="img-fluid px-6 px-md-0" src="{% static 'assets/img/illustrations/5.svg' %}" alt="" /></div>
+         <div class="col-md col-lg-5 col-xl-4 mt-4 mt-md-0">
+            <h5 class="text-warning"> <span class="fas fa-phone-alt ms-2"></span> Service Client</h5>
+            <h3>Service Client</h3>
+            <p>Nous offrons un service client disponible 24/7 pour les clients de nos partenaires. Nous prenons en charge toutes les questions et les demandes de support afin de garantir une expérience client optimale. Vous pouvez compter sur nous pour répondre rapidement et efficacement à toutes les demandes de vos clients.</p>
+         </div>
+      </div>
+      </div>
+   </section>
+   <section class="light">
+      <div class="bg-holder overlay" style="background: url({% static 'assets/img/generic/bg-2.jpg' %}) center top;">
+      </div>
+      <div class="container">
+      <div class="row justify-content-center text-center">
+         <div class="col-lg-8">
+            <p class="fs-3 fs-sm-4 text-white">Alors qu’attendez-vous ?</p>
+            <a class="btn btn-outline-light border-2 rounded-pill btn-lg mt-4 fs-0 py-2pip" href="#">Contactez-nous !</a>
+         </div>
+      </div>
+   </div>
+   </section>
+      <section class="bg-dark pt-8 pb-4 light">
+   <div class="container">
+      <div class="position-absolute btn-back-to-top bg-dark">
+         <a class="text-600" href="#banner" data-bs-offset-top="0" data-scroll-to="#banner">
+            <span class="fas fa-chevron-up" data-fa-transform="rotate-45"></span>
+         </a>
+      </div>
+      <div class="row gap-7">
+         <div class="col-lg-4">
+            <h5 class="text-uppercase text-white opacity-85 mb-3">Notre mission</h5>
+            <p class="text-600">StoreLinkers s'occupe de tous les échanges entre les e-commerçants et les sociétés de livraison afin de vous faire gagner
+du temps, de l'argent et de l'énergie</p>
+         </div>
+         <div class="col ps-lg-6 ps-xl-8">
+         <div class="row mt-5 mt-lg-0">
+            <div class="col-lg-4 col-md-3">
+               <h5 class="text-uppercase text-white opacity-85 mb-3">Contact</h5>
+               <ul class="list-unstyled">
+                 <li class="mb-1"><a class="link-600" href="#">Adresse : Rue Yasser Arafet Sahloul , Sousse </a></li>
+                 <li class="mb-1"><a class="link-600" href="#">phone : +216 25 770 277 </a></li>
+                  <li class="mb-1"><a class="link-600" href="#">Email : eya@storelinkers.com </a></li>
+               </ul>
+               <div>
+  <a href='https://www.facebook.com/profile.php?id=100091987014082' style="margin: 15px; padding: 6px 0px; display: inline-block"><img src="{% static 'images/ff.png' %}" alt="" height="32px" /></a>
+  <a href='https://www.instagram.com/store_linkers/' style="margin: 15px; padding: 6px 0px; display: inline-block"><img src="{% static 'images/ii.png' %}" alt="" height="32px" /></a>
+</div>
+
+            </div>
+
+            <div class="col mt-5 mt-md-0">
+               <h5 class="text-uppercase text-white opacity-85 mb-3">Depuis le blog</h5>
+               <h3 class="fw-light overflow-hidden"><span class="typed-text fw-bold ms-1" data-typed-text='["AA", "À annoncer"]'></span></h3>
+            </div>
+         </div>
+         </div>
+      </div>
+   </div>
+</section>
+<section class="py-0 bg-dark light">
+   <div>
+      <hr class="my-0 text-600 opacity-25" />
+      <div class="container py-3">
+         <div class="row justify-content-between fs--1">
+         <div class="col-12 col-sm-auto text-center">
+            <p class="mb-0 text-600 opacity-85">Merci d’avoir visité STORELINKERS  <span class="d-none d-sm-inline-block">|</span><br class="d-sm-none" /> 2022</p>
+         </div>
+         </div>
+      </div>
+   </div>
+</section>
+        {% else %}
+        {% include 'include/index_tr.html' %}
+    {% endif %}
+{% endblock %}

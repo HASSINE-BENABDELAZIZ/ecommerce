@@ -1,0 +1,67 @@
+{% load i18n static %}
+                <div class="table-responsive scrollbar">
+                <table class="table table-bordered table-striped fs--1 mb-0">
+                  <thead class="bg-200 text-900">
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">User</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Fonction</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Groups</th>
+
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Statut</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Rejoint</th>
+
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody class="list">
+                    {% for user in page_obj %}
+
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div>
+                            <img src="{{ user.photo_url }}" class="circular--landscape" alt="user1">
+                          </div>
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ user.get_full_name }}</h6>
+                            <p class="text-xs text-secondary mb-0">{{ user.email }}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                     {% if user.is_superuser %}   <p class="text-xs font-weight-bold mb-0">Admin</p>{% endif %}
+                     {% if user.is_staff %}   <p class="text-xs text-secondary mb-0">Staff</p> {% endif %}
+                      {% if user.is_active %}<p class="text-xs text-secondary mb-0">Active</p> {% endif %}
+                      </td>
+                    <td>
+                    {% for group in user.groups.all %}
+                     <p class="text-xs font-weight-bold mb-0">{{ group }}</p>
+                    {% endfor %}
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                       {% if user.online == "True" %}
+                           <span class="badge fw-medium text-decoration-none me-2 badge-soft-success">En ligne</span>
+                       {% else %}
+                           <span class="badge fw-medium text-decoration-none me-2 badge-soft-warning">Hors ligne</span>
+                       {% endif %}
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">{{ user.created_at }}</span>
+                      </td>
+                      <td class="align-middle">
+                     {% if 'accounts.change_user' in request.user.get_all_permissions %}
+
+                        <a href="{% url 'accounts:change_list' pk=user.id %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                          Modifier
+                        </a>
+                          {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+                </div>
+<br>
+    <div class="pagination">
+        {% include "pagination.html" %}
+    </div>

@@ -1,0 +1,204 @@
+{% load i18n %}
+
+<div class="card-footer">
+    <div class="row align-items-center">
+        <div class="col">
+            <p class="mb-0 fs--1"><span class="d-none d-sm-inline-block me-2">
+        Affichage de {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }} pages</span>
+            </p>
+        </div>
+        <div class="col-auto d-flex">
+            {% if page_obj.has_previous %}
+                <a class="btn btn-falcon-default btn-sm me-2" type="button" data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   href="?{{ params }}&page={{ page_obj.previous_page_number }}" title=""
+                   data-bs-original-title="Previous"
+                   aria-label="Previous">
+                    <span class="fas fa-chevron-left"></span></a>
+            {% else %}
+                <a class="btn btn-falcon-default btn-sm me-2 disabled" type="button" data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   href="" title="" data-bs-original-title="Previous" aria-label="Previous">
+                    <span class="fas fa-chevron-left"></span></a>
+            {% endif %}
+            {% for num_page in page_obj.paginator.page_range %}
+                {% if num_page == page_obj.number %}
+                    <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                       href="?{{ params }}&page={{ page_obj.number }}">{{ num_page }}</a>
+                {% elif num_page > page_obj.number|add:'-4' and num_page < page_obj.number|add:'4' %}
+                    <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                       href="?{{ params }}&page={{ num_page }}">{{ num_page }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <a href="?{{ params }}&page={{ page_obj.next_page_number }}" class="btn btn-falcon-default btn-sm"
+                   type="button"
+                   data-bs-toggle="tooltip" data-bs-placement="top"
+                   title="" data-bs-original-title="Next" aria-label="Next">
+                    <span class="fas fa-chevron-right"></span></a>
+            {% else %}
+                <a href="" class="btn btn-falcon-default btn-sm disabled" type="button" data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   title="" data-bs-original-title="Next" aria-label="Next">
+                    <span class="fas fa-chevron-right"></span></a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+
+{% block extrascript %}
+
+{#    <script type="text/javascript">#}
+{##}
+{#        function submitButtonClick(event) {#}
+{#            event.preventDefault();#}
+{#            let search_bar = $("#searchbar");#}
+{#            update_on_search(search_bar.val(), 1, "-created_at")#}
+{##}
+{#        }#}
+{##}
+{#        function sort_by(item) {#}
+{#            let type_of_sort = parseInt($(item).attr("sorted"))#}
+{#            let value_of_sort = $(item).html().replaceAll('<span class="caret-4-asc"></span>', "").replaceAll('<span class="caret-4-desc"></span>', "")#}
+{#            console.log(value_of_sort)#}
+{#            if (value_of_sort === "order Number")#}
+{#                value_of_sort = "order_number"#}
+{#            if (value_of_sort === "Created at")#}
+{#                value_of_sort = "created_at"#}
+{#            if (value_of_sort === "Zipcode")#}
+{#                value_of_sort = "zip_code"#}
+{#            if (value_of_sort === "State")#}
+{#                value_of_sort = "state"#}
+{##}
+{#            $(".sorting").removeAttr("sorted")#}
+{#            $(".sorting").removeClass("sorting")#}
+{#            $(item).addClass("sorting")#}
+{#            if (type_of_sort === 1) {#}
+{#                $(item).attr("sorted", 2)#}
+{#                $(item).html(value_of_sort + "<span class='caret-4-asc'></span>")#}
+{#            } else {#}
+{#                $(item).attr("sorted", 1)#}
+{#                $(item).html(value_of_sort + "<span class='caret-4-desc'></span>")#}
+{#                value_of_sort = "-" + value_of_sort#}
+{#            }#}
+{##}
+{#            let search_bar = $("#searchbar");#}
+{#            update_on_search(search_bar.val(), 1, value_of_sort)#}
+{##}
+{#        }#}
+{##}
+{#        function pageclicked(item) {#}
+{#            let selected_value = parseInt($(".active_page").html())#}
+{#            let clicked_value = $(item).html()#}
+{#            if (clicked_value == "Next") {#}
+{#                clicked_value = selected_value + 1#}
+{#            }#}
+{#            if (clicked_value == "Prev") {#}
+{#                clicked_value = selected_value - 1#}
+{#            }#}
+{#            if (clicked_value == "First") {#}
+{#                clicked_value = 1#}
+{#            }#}
+{#            if (clicked_value == "Last") {#}
+{#                clicked_value = parseInt({{ page_obj.paginator.page_range|length }})#}
+{#            }#}
+{##}
+{##}
+{#            let search_bar = $("#searchbar");#}
+{#            update_on_search(search_bar.val(), clicked_value, "-created_at")#}
+{#        }#}
+{##}
+{#        function update_on_search(search, page, value_of_sort) {#}
+{##}
+{#            if (!search) {#}
+{#                search = ""#}
+{#            }#}
+{#            if (!page) {#}
+{#                page = 1;#}
+{#            }#}
+{#            history.pushState({#}
+{#                "page": page,#}
+{#                "search": "{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.sort_value %}&sort_value={{ request.GET.sort_value }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.substatus %}&substatus={{ request.GET.substatus }}{% endif %}"#}
+{#            }, "?page=" + page + "{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.sort_value %}&sort_value={{ request.GET.sort_value }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.substatus %}&substatus={{ request.GET.substatus }}{% endif %}", "?page=" + page + "&search=" + search + "{% if request.GET.sort_value %}&sort_value={{ request.GET.sort_value }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.substatus %}&substatus={{ request.GET.substatus }}{% endif %}");#}
+{#            let url = "{{ request.path }}";#}
+{#            $("tbody").attr("class", "changelist-form");#}
+{#            $(".changelist-form")#}
+{#            $("#loader").show();#}
+{#            let object_id = "{% if request.GET.id %}{{ request.GET.id }}{% endif %}"#}
+{#            $.ajax({#}
+{#                type: 'GET',#}
+{#                url: url,#}
+{#                data: {#}
+{#                    "page": page,#}
+{#                    "search": search,#}
+{#                    "id": object_id,#}
+{#                    "sort_value": value_of_sort,#}
+{#                    "status": "{% if request.GET.status %}{{ request.GET.status }}{% endif %}",#}
+{#                    "substatus": "{% if request.GET.substatus %}{{ request.GET.substatus }}{% endif %}"#}
+{#                }#}
+{##}
+{#            }).done(function (data) {#}
+{##}
+{#                $("#content").html("")#}
+{#                $("#content").html(data)#}
+{##}
+{#                $("#loader").hide();#}
+{##}
+{#                (function ($) {#}
+{#                    $(document).ready(function () {#}
+{#                        $(".changelist-form").show();#}
+{#                        $("#loader").hide();#}
+{#                        $(".action-counter").hide();#}
+{#                    });#}
+{#                })(window.jQuery);#}
+{#            });#}
+{#        }#}
+{##}
+{#        (function ($) {#}
+{#            $(document).ready(function () {#}
+{#                $(".changelist-form").show();#}
+{#                $("#loader").hide();#}
+{##}
+{##}
+{#            });#}
+{##}
+{##}
+{#        })(window.jQuery);#}
+{##}
+{##}
+{#        $('#selectable_table').on('click', '.clickable', function (event) {#}
+{#            var checkbox = $(this).find(":checkbox");   // keep reference of checkbox#}
+{#            var checked = $(this).is(":checked");#}
+{#            if (!checked) {#}
+{#                $(this).parent().parent().removeClass('highlight_table_color');#}
+{#            } else {#}
+{#                $(this).parent().parent().addClass('highlight_table_color');#}
+{##}
+{#            }#}
+{#            checkbox.attr("checked", checked);#}
+{##}
+{#        }).on('click', '#select_all', function () {#}
+{#            var checkbox = $(this).find(":checkbox");   // keep reference of checkbox#}
+{#            var checked = checkbox.is(":checked");#}
+{#            $('#select_all_items > tr').each(function () {#}
+{#                var checkbox1 = $(this).find(":checkbox");#}
+{#                checked = $("#select_all").is(":checked")#}
+{#                if (!checked) {#}
+{#                    $(this).removeClass('highlight_table_color');#}
+{#                } else {#}
+{#                    $(this).addClass('highlight_table_color');#}
+{##}
+{#                }#}
+{#                checkbox1.prop("checked", checked);#}
+{##}
+{##}
+{#            });#}
+{##}
+{#        });#}
+{##}
+{##}
+{#    </script>#}
+
+{% endblock %}

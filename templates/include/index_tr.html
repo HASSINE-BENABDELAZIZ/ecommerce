@@ -1,0 +1,487 @@
+{% load static %}
+<div class="d-flex mb-4 mt-3" id="haja"><span class="fa-stack me-2 ms-n1"><i
+        class="fas fa-circle fa-stack-2x text-300"></i><i
+        class="fa-inverse fa-stack-1x text-primary fas fa-percentage"></i></span>
+    <div class="col">
+        <h5 class="mb-0 text-primary position-relative"><span
+                class="bg-200 dark__bg-1100 pe-3">Tableau de bord &amp; Statistiques</span><span
+                class="border position-absolute top-50 translate-middle-y w-100 start-0 z-index--1"></span></h5>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="card bg-transparent-50 overflow-hidden">
+                <div class="card-header position-relative">
+                    <div class="bg-holder d-none d-md-block bg-card z-index-1"
+                         style="background-image:url({% static 'assets/img/illustrations/ecommerce-bg.png' %});background-size:230px;background-position:right bottom;z-index:-1;">
+                    </div>
+                    <!--/.bg-holder-->
+
+                    <div class="position-relative z-index-2">
+                        <div>
+                            <h3 class="text-primary mb-1">Bon{% now "H" as current_time %}{% if current_time > 12 %}Après-midi{% else %}jour
+                                {% endif %}
+                                , {% if request.user.first_name %}
+                                    {{ request.user.first_name }}
+                                {% else %}
+                                    {{ request.user.username }}
+                                {% endif %} !</h3>
+                            <p>Voici ce qui se passe avec votre magasin aujourd'hui </p>
+                        </div>
+                        <div class="d-flex py-3">
+                            <div class="pe-3">
+                                <p class="text-600 fs--1 fw-medium">La visite d'aujourd'hui </p>
+                                <h4 class="text-800 mb-0 today-visit"></h4>
+                            </div>
+                            <div class="ps-3">
+                                <p class="text-600 fs--1">Ventes totales d'aujourd'hui </p>
+                                <h4 class="text-800 mb-0 today-total"></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="mb-0 list-unstyled">
+                        <li class="alert mb-0 rounded-0 py-3 px-card greetings-item border-top border-x-0 border-top-0">
+                            <div class="row flex-between-center">
+                                <div class="col">
+                                    <div class="d-flex">
+                                        <svg class="svg-inline--fa fa-circle fa-w-16 mt-1 fs--2 text-primary"
+                                             aria-hidden="true" focusable="false" data-prefix="fas" data-icon="circle"
+                                             role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                                             data-fa-i2svg="">
+                                            <path fill="currentColor"
+                                                  d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z"></path>
+                                        </svg>
+                                        <!-- <div class="fas fa-circle mt-1 fs--2 text-primary"></div> Font Awesome fontawesome.com -->
+                                        <p class="fs--1 ps-2 mb-0"><strong class="livrer"></strong> ont des paiements qui doivent être capturés</p>
+                                    </div>
+                                </div>
+                                <div class="col-auto d-flex align-items-center"><a class="alert-link fs--1 fw-medium"
+                                                                                   href="{% url 'orders:order_list' %}?status=OS">Afficher les paiements
+                                    <svg class="svg-inline--fa fa-chevron-right fa-w-10 ms-1 fs--2" aria-hidden="true"
+                                         focusable="false" data-prefix="fas" data-icon="chevron-right" role="img"
+                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg="">
+                                        <path fill="currentColor"
+                                              d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
+                                    </svg>
+                                    <!-- <i class="fas fa-chevron-right ms-1 fs--2"></i> Font Awesome fontawesome.com -->
+                                </a></div>
+                            </div>
+                        </li>
+                        <li class="alert mb-0 rounded-0 py-3 px-card greetings-item border-top  border-0">
+                            <div class="row flex-between-center">
+                                <div class="col">
+                                    <div class="d-flex">
+                                        <svg class="svg-inline--fa fa-circle fa-w-16 mt-1 fs--2 text-primary"
+                                             aria-hidden="true" focusable="false" data-prefix="fas" data-icon="circle"
+                                             role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                                             data-fa-i2svg="">
+                                            <path fill="currentColor"
+                                                  d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z"></path>
+                                        </svg>
+                                        <!-- <div class="fas fa-circle mt-1 fs--2 text-primary"></div> Font Awesome fontawesome.com -->
+                                        <p class="fs--1 ps-2 mb-0"><strong class="new"></strong> besoin d'être rempli
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-auto d-flex align-items-center"><a class="alert-link fs--1 fw-medium"
+                                                                                   href="{% url 'orders:order_list' %}?status=NO">Afficher les commandes
+                                    <svg class="svg-inline--fa fa-chevron-right fa-w-10 ms-1 fs--2" aria-hidden="true"
+                                         focusable="false" data-prefix="fas" data-icon="chevron-right" role="img"
+                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg="">
+                                        <path fill="currentColor"
+                                              d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
+                                    </svg>
+                                    <!-- <i class="fas fa-chevron-right ms-1 fs--2"></i> Font Awesome fontawesome.com -->
+                                </a></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="card col-md-6">
+            <div class="card-body ">
+                <div class="row g-3">
+                    <div class="col-6 col-md-4 border-200 border-bottom border-end pb-5">
+                        <h6 class="pt-3 text-700">Colis </h6>
+                        <p class="font-sans-serif lh-1 mb-1 fs-2 orders"></p>
+                    </div>
+                    <div class="col-6 col-md-4 border-200 border-md-200 border-bottom border-md-end pb-5 ps-3">
+                        <h6 class="pt-3 text-700">Objets vendus </h6>
+                        <p class="font-sans-serif lh-1 mb-1 fs-2 sold"></p>
+                    </div>
+                    <div class="col-6 col-md-4 border-200 border-bottom border-end border-md-end-0 pb-5 pt-5 pt-md-0 ps-md-3">
+                        <h6 class="pt-3 text-700">Remboursements </h6>
+                        <p class="font-sans-serif lh-1 mb-1 fs-2 refunds"></p>
+                    </div>
+                    <div class="col-6 col-md-4 border-200 border-md-200 border-bottom border-md-bottom-0 border-md-end pt-5 pb-md-0 ps-3 ps-md-0">
+                        <h6 class="pb-1 text-700">Vente brute </h6>
+                        <p class="font-sans-serif lh-1 mb-1 fs-2 cost"></p>
+                    </div>
+                    <div class="col-6 col-md-4 border-200 border-md-bottom-0 border-end pt-5 pb-md-0 ps-md-3">
+                        <h6 class="pb-1 text-700">Expédition </h6>
+                        <p class="font-sans-serif lh-1 mb-1 fs-2 shipping"></p>
+                    </div>
+                    <div class="col-6 col-md-4 pb-0 pt-5 ps-3">
+                        <h6 class="pb-1 text-700">Traitement </h6>
+                        <p class="font-sans-serif lh-1 mb-1 fs-2 processing"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="row g-3 ">
+    <div class="col-md-3">
+        <div class="card shopping-cart-bar-min-height h-100">
+            <div class="card-header d-flex flex-between-center">
+                <h6 class="mb-0">Statut de la commande</h6>
+            </div>
+            <div class="card-body py-0 d-flex align-items-center h-100">
+                <div class="flex-1">
+                    <div class="row g-0 align-items-center pb-3">
+                        <div class="col pe-4">
+                            <h6 class="fs--2 text-600 news"></h6>
+                            <div class="progress" style="height:5px">
+                                <div class="progress-bar rounded-3 bg-primary status_new" role="progressbar"
+                                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="col-auto text-end">
+                            <p class="mb-0 text-900 font-sans-serif stat_new">
+                                <svg class="svg-inline--fa fa-caret-up fa-w-10 me-1 text-success" aria-hidden="true"
+                                     focusable="false" data-prefix="fas" data-icon="caret-up" role="img"
+                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg="">
+                                    <path fill="currentColor"
+                                          d="M288.662 352H31.338c-17.818 0-26.741-21.543-14.142-34.142l128.662-128.662c7.81-7.81 20.474-7.81 28.284 0l128.662 128.662c12.6 12.599 3.676 34.142-14.142 34.142z"></path>
+                                </svg>
+                                <!-- <span class="me-1 fas fa-caret-up text-success"></span> Font Awesome fontawesome.com -->
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row g-0 align-items-center pb-3 border-top pt-3">
+                        <div class="col pe-4">
+                            <h6 class="fs--2 text-600 prob"></h6>
+                            <div class="progress" style="height:5px">
+                                <div class="progress-bar rounded-3 bg-danger status_prob" role="progressbar"
+                                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="col-auto text-end">
+                            <p class="mb-0 text-900 font-sans-serif stat_prob">
+                                <svg class="svg-inline--fa fa-caret-up fa-w-10 me-1 text-danger" aria-hidden="true"
+                                     focusable="false" data-prefix="fas" data-icon="caret-up" role="img"
+                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg="">
+                                    <path fill="currentColor"
+                                          d="M288.662 352H31.338c-17.818 0-26.741-21.543-14.142-34.142l128.662-128.662c7.81-7.81 20.474-7.81 28.284 0l128.662 128.662c12.6 12.599 3.676 34.142-14.142 34.142z"></path>
+                                </svg>
+                                <!-- <span class="me-1 fas fa-caret-up text-danger"></span> Font Awesome fontawesome.com -->
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row g-0 align-items-center pb-3 border-top pt-3">
+                        <div class="col pe-4">
+                            <h6 class="fs--2 text-600 comp"></h6>
+                            <div class="progress" style="height:5px">
+                                <div class="progress-bar rounded-3 bg-primary status_complete" role="progressbar"
+                                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="col-auto text-end">
+                            <p class="mb-0 text-900 font-sans-serif stat_comp">
+                                <svg class="svg-inline--fa fa-caret-up fa-w-10 me-1 text-success" aria-hidden="true"
+                                     focusable="false" data-prefix="fas" data-icon="caret-up" role="img"
+                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg="">
+                                    <path fill="currentColor"
+                                          d="M288.662 352H31.338c-17.818 0-26.741-21.543-14.142-34.142l128.662-128.662c7.81-7.81 20.474-7.81 28.284 0l128.662 128.662c12.6 12.599 3.676 34.142-14.142 34.142z"></path>
+                                </svg>
+                                <!-- <span class="me-1 fas fa-caret-up text-success"></span> Font Awesome fontawesome.com -->
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row g-0 align-items-center pb-3 border-top pt-3">
+                        <div class="col pe-4">
+                            <h6 class="fs--2 text-600 action"></h6>
+                            <div class="progress" style="height:5px">
+                                <div class="progress-bar rounded-3 bg-primary status_action" role="progressbar"
+                                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="col-auto text-end">
+                            <p class="mb-0 text-900 font-sans-serif stat_action">
+                                <svg class="svg-inline--fa fa-caret-down fa-w-10 me-1 text-danger" aria-hidden="true"
+                                     focusable="false" data-prefix="fas" data-icon="caret-down" role="img"
+                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg="">
+                                    <path fill="currentColor"
+                                          d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"></path>
+                                </svg>
+                                <!-- <span class="me-1 fas fa-caret-down text-danger"></span> Font Awesome fontawesome.com -->
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row g-0 align-items-center pb-3 border-top pt-3">
+                        <div class="col pe-4">
+                            <h6 class="fs--2 text-600 ship"></h6>
+                            <div class="progress" style="height:5px">
+                                <div class="progress-bar rounded-3 bg-primary status_shipped" role="progressbar"
+                                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="col-auto text-end">
+                            <p class="mb-0 text-900 font-sans-serif stat_shipped">
+                                <svg class="svg-inline--fa fa-caret-up fa-w-10 me-1 text-success" aria-hidden="true"
+                                     focusable="false" data-prefix="fas" data-icon="caret-up" role="img"
+                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg="">
+                                    <path fill="currentColor"
+                                          d="M288.662 352H31.338c-17.818 0-26.741-21.543-14.142-34.142l128.662-128.662c7.81-7.81 20.474-7.81 28.284 0l128.662 128.662c12.6 12.599 3.676 34.142-14.142 34.142z"></path>
+                                </svg>
+                                <!-- <span class="me-1 fas fa-caret-up text-success"></span> Font Awesome fontawesome.com -->
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card h-lg-100 overflow-hidden">
+            <div class="card-body p-0">
+                <div class="table-responsive scrollbar">
+                    <table class="table table-dashboard mb-0 table-borderless fs--1 border-200">
+                        <thead class="bg-light">
+                        <tr class="text-900">
+                            <th>Produits les plus vendus</th>
+                            <th class="text-center">Colis</th>
+                            <th class="text-center">Coli(%)</th>
+                            <th class="text-end">Revenu</th>
+                            <th class="pe-card text-end" style="width: 8rem">Revenu (%)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for product in products %}
+                            <tr class="border-bottom border-200">
+                                <td>
+                                    <div class="d-flex align-items-center position-relative"><img
+                                            class="rounded-1 border border-200"
+                                            src="{{ product.image_path }}" width="60" alt="">
+                                        <div class="flex-1 ms-3">
+                                            <h6 class="mb-1 fw-semi-bold text-nowrap"><a
+                                                    class="text-900 stretched-link"
+                                                    href="{% url 'products:change_list' product.id %}">{{ product.name }}</a>
+                                            </h6>
+                                            <p class="fw-semi-bold mb-0 text-500">{{ product.sku }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="align-middle text-center fw-semi-bold">{{ product.orderitems_set.count }}</td>
+                                <td class="align-middle text-center fw-semi-bold">{{ product.perc }}%</td>
+                                <td class="align-middle text-end fw-semi-bold">{{ product.revenue }}</td>
+                                <td class="align-middle pe-card">
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress me-3 rounded-3 bg-200" style="height: 5px;width:80px">
+                                            <div class="progress-bar bg-primary rounded-pill" role="progressbar"
+                                                 style="width: {{ product.perc }}%;" aria-valuenow="0"
+                                                 aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="fw-semi-bold ms-2"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-light py-2">
+                <div class="row flex-between-center">
+                    <div class="col-auto"><a class="btn btn-sm btn-falcon-default" href="{% url 'orders:order_list' %}">Voir tout</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: "/stat/today",
+            type: 'get',
+            data: {"cost": 0, "day": 0, "visits": 0, "orders": 0},
+            success: function (res) {
+                $(".today-visit").text(res.visits)
+                $(".today-total").text(res.cost + " TND")
+                $(".orders").text(res.orders)
+                $(".cost").text(res.cost + " TND")
+            }
+        })
+        $.ajax({
+            url: "/stat/day",
+            type: 'get',
+            data: {
+                "prix": 0,
+                "per_day": [{"estimated_shipment_cost": 0.0, "day_num": 0, "c": 0}],
+                "visits": 0
+            },
+            success: function (res) {
+                $(".cost").text(res.prix)
+            }
+        })
+        $.ajax({
+            url: "/stat/week",
+            type: 'get',
+            data: {
+                "this_week": 0.0,
+                "days": [
+                    {"day": 0, "count": 0, "cost": 0},
+                    {"day": 0, "count": 0, "cost": 0},
+                    {"day": 0, "count": 0, "cost": 0},
+                    {"day": 0, "count": 0, "cost": 0},
+                    {"day": 0, "count": 0, "cost": 0},
+                    {"day": 0, "count": 0, "cost": 0},
+                    {"day": 0, "count": 0, "cost": 0},
+                    {"day": 0, "count": 0, "cost": 0}],
+                "week_sales": [
+                    {"week_num": 0, "count": 0, "estimated_shipment_cost__sum": 0.0}
+                ],
+                "perc": 0.0
+            },
+            success: function (res) {
+                $(".week").text(res.this_week)
+                $(".perc").text(res.perc + "%")
+            }
+        })
+        $.ajax({
+            url: "/stat/month",
+            type: 'get',
+            data: {"chart_weeks": [], "chart_data": [], "this_month": 0},
+            success: function (res) {
+                $(".perc_month").text(res.perc + "%")
+                $(".total-orders").text(res.this_month)
+            }
+        })
+        $.ajax({
+            url: "/stat/",
+            type: 'get',
+            data: {
+                "orders": 0,
+                "customers": 0,
+                "visits": 0,
+                "livrer": 0,
+                "new": 0,
+                "sold": 0,
+                "refunds": 0,
+                "shipping": 0,
+                "processing": 0,
+                "cost": 0,
+            },
+            success: function (res) {
+                $(".livrer").text(res.livrer + " orders")
+                $(".new").text(res.new + " orders")
+                $(".sold").text(res.sold)
+                $(".refunds").text(res.refunds)
+                $(".shipping").text(res.shipping)
+                $(".processing").text(res.processing)
+
+            }
+        })
+        $.ajax({
+            url: "/stat/completed",
+            type: 'get',
+            data: {
+                "items": [
+                    {
+                        "id": 0,
+                        "order_id": 0,
+                        "original_order_item_id": 0,
+                        "original_product_id": 0,
+                        "sku": "",
+                        "name": "",
+                        "quantity": 0,
+                        "percentage": 0
+                    },
+                    {
+                        "id": 0,
+                        "order_id": 0,
+                        "original_order_item_id": 0,
+                        "original_product_id": 0,
+                        "sku": "",
+                        "name": "",
+                        "quantity": 0,
+                        "percentage": 0
+                    },
+                    {
+                        "id": 0,
+                        "order_id": 0,
+                        "original_order_item_id": 0,
+                        "original_product_id": 0,
+                        "sku": "",
+                        "name": "",
+                        "quantity": 0,
+                        "percentage": 0
+                    }
+                ]
+            },
+            success: function (res) {
+                $(".length").text(res.items.length)
+                $(".name1").text(res.items[0].name)
+                $(".pr1").text(res.items[0].percentage + "%")
+                $(".name2").text(res.items[1].name)
+                $(".pr2").text(res.items[1].percentage + "%")
+                $(".name3").text(res.items[2].name)
+                $(".pr3").text(res.items[2].percentage + "%")
+            }
+        })
+        $.ajax({
+            url: "/stat/status",
+            type: 'get',
+            data: {
+                "data": [
+                    {"new": 0, "perc": 0.0},
+                    {"action": 0, "perc": 0.0},
+                    {"shipped": 0, "perc": 0.0},
+                    {"completed": 0, "perc": 0.0},
+                    {"problems": 0, "perc": 0.0}
+                ]
+            },
+            success: function (res) {
+                $(".news").text("Nouveau")
+                $(".status_new").style = "width: " + res.data[0].perc + "%"
+                $(".stat_new").text(res.data[0].perc + "%")
+                $(".action").text("Action")
+                $(".status_action").style = "width:" + res.data[1].perc + "%"
+                $(".stat_action").text(res.data[1].perc + "%")
+                $(".ship").text("Expédié")
+                $(".status_shipped").style = "width:" + res.data[2].perc + "%"
+                $(".stat_shipped").text(res.data[2].perc + "%")
+                $(".comp").text("Complété")
+                $(".status_comp").style = "width:" + res.data[3].perc + "%"
+                $(".stat_comp").text(res.data[3].perc + "%")
+                $(".prob").text("Problèmes")
+                $(".status_prob").style = "width:" + res.data[4].perc + "%"
+                $(".stat_prob").text(res.data[4].perc + "%")
+            }
+        })
+        $.ajax({
+            url: "/stat/total",
+            type: 'get',
+            data: {"total_month": 0, "total_year": 0},
+            success: function (res) {
+                $('.this_month').text(": " + res.total_month + " TND")
+                $('.this_year').text(": " + res.total_year + " TND")
+            }
+        })
+        $.ajax({
+            url: "/stat/shipped",
+            type: 'get',
+            data: {"perc": 0, "target": 0},
+            success: function (res) {
+                $(".shipped_perc").text(res.perc + "%")
+                $(".shipped_target").text(res.target + "%")
+            }
+        })
+    })
+</script>
+<script src="{% static 'vendors/chart/chart.min.js' %}"></script>

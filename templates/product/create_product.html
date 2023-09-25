@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} STORELINKERS| {% if edit %} Modifier {% else %}Ajouter {% endif %}Produit {% endblock title %}
+
+{% load widget_tweaks %}
+
+
+{% block alerts %}
+    {% if form.errors %}
+        <div class="container-fluid px-0">
+            <div class="alert alert-danger alert-dismissible fade show m-0" role="alert">
+                {% for field in form %}
+                    {% if field.errors %}{{ field.errors }}{% endif %}
+                {% endfor %}
+                <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="alert alert-warning alert-dismissible fade show m-0" role="alert">
+                {% for error in non_field_errors %}
+                    {% if error %}{{ error }}{% endif %}
+                {% endfor %}
+                <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-3 ps-3">
+            <li class="breadcrumb-item">
+                <a href="{% block pathtitle %} {% url 'products:product_list' %} {% endblock %}">
+                    {% block breadtitle %} Produits {% endblock %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {% block midtitle %}{% if edit %} Modifier {% else %} Ajouter nouveau {% endif %}
+                    Produit {% endblock %}</li>
+        </ol>
+    </nav>
+    <form method="post" enctype="multipart/form-data" class="py-3">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Image du Produit</h5>
+                    </div>
+                    <div class="card-body bg-light">
+                        <div class="row gx-2">
+                            <div class="col-12">
+                                <img alt="" style="width:200px" src="
+
+
+
+
+
+                                        {% if form.instance.image_url %}{{ form.instance.image_url.url }}{% else %} {% static "images/default_product1.png" %}{% endif %}">
+                            </div>
+                            <div class="col-12 ps-3">
+                                {{ form.image_url.label_tag }}
+                                {{ form.image_url|add_class:"form-control fs--1" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>Détails du Produit</h5>
+                    </div>
+                    <div class="card-body bg-light">
+                        <div class="row gx-2">
+                            <div class="col-sm-4 mb-3">
+                                {{ form.brand.label_tag }}
+                                {{ form.brand|add_class:"form-control fs--1" }}
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                {{ form.weight.label_tag }}
+                                {{ form.weight|add_class:"form-control fs--1" }}
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                {{ form.year.label_tag }}
+                                {{ form.year|add_class:"form-control fs--1" }}
+                            </div>
+                        </div>
+                        <div class="border-dashed-bottom my-3"></div>
+                        <div class="row gx-2">
+                            <div class="col-sm-4 mb-3">
+                                {{ form.price.label_tag }}
+                                {{ form.price|add_class:"form-control fs--1" }}
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                {{ form.currency.label_tag }}
+                                {{ form.currency|add_class:"form-control fs--1" }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form.upc.label_tag }}
+                                {{ form.upc|add_class:"form-control fs--1" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>Informations sur le Produit</h5>
+                    </div>
+                    <div class="card-body bg-light">
+                        <div class="row gx-2">
+                            {% if "admin" in request.user.groups.all or request.user.is_superuser %}
+                                <div class="col-sm-12 mb-3">
+                                    {{ form.marketplace.label_tag }}
+                                    {{ form.marketplace|add_class:"form-select fs--1" }}
+                                </div>
+                            {% endif %}
+                            <div class="col-sm-12 mb-3">
+                                {{ form.sku.label_tag }}
+                                {{ form.sku|add_class:"form-control fs--1" }}
+                            </div>
+                            <div class="col-sm-12 mb-3">
+                                {{ form.name.label_tag }}
+                                {{ form.name|add_class:"form-control fs--1" }}
+                            </div>
+                            <div class="col-sm-12 mb-3">
+                                {{ form.stock.label_tag }}
+                                {{ form.stock|add_class:"form-control fs--1" }}
+                            </div>
+                            <div class="col-sm-12 mb-3">
+                                {{ form.category.label_tag }}
+                                {{ form.category|add_class:"form-select fs--1" }}
+                            </div>
+                            <div class="col-sm-12 mb-3">
+                                {{ form.subcategory.label_tag }}
+                                {{ form.subcategory|add_class:"form-select fs--1" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="border-dashed-bottom my-3"></div>
+        {% if edit %}
+            <div class="row">
+                <div class="row align-items-center">
+                    <div class="col"><a class="btn btn-dark" href="{% url 'products:product_list' %}">Annuler</a></div>
+                    <div class="col-auto d-flex">
+                        <button type="submit" name="save_data" class="btn btn-primary me-2">Sauvegarder les
+                            modifications
+                        </button>
+                        {% if 'products.delete_product' in request.user.get_all_permissions %}
+                            <a type="button" class="btn btn-danger me-2" data-bs-toggle="modal"
+                               data-bs-target="#delete_product" rel="modal:open">
+                                <span class="far fa-trash-alt" data-fa-transform="shrink-3 down-2"></span>
+                                Supprimer</a>
+                        {% endif %}
+                        <a type="button" href="{% url "products:product_logs" %}?id={{ object.id }}"
+                           class="btn btn-secondary">
+                            <span class="fas fa-history me-1" data-fa-transform="shrink-3 down-2"></span>Historiques
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="row align-items-center">
+                    <div class="col"><a class="btn btn-dark" href="{% url 'products:product_list' %}">Annuler</a></div>
+                    <div class="col-auto d-flex">
+                        <button type="submit" name="save_data" class="btn btn-primary me-2">Soumettre</button>
+                        <button type="submit" name="save_more" class="btn btn-primary me-2">Enregistrer et Ajouter un
+                            autre
+                        </button>
+                        <button type="submit" name="save_edit" class="btn btn-primary">Enregistrer et continuer
+                            l'édition
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </form>
+
+    {% if edit %}
+        <div class="modal fade" id="delete_product" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-danger">
+                            <span class="far fa-trash-alt" data-fa-transform="shrink-3 down-2"></span>
+                            Êtes-vous sûr de vouloir supprimer ce produit ?</h5>
+                        <button class="btn-close btn btn-sm transition-base" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{% url "products:product_delete" pk=object.id %}">
+                        {% csrf_token %}
+                        <div class="modal-footer">
+                            <button class="btn btn-outline-danger btn-sm" type="submit">Confirmer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block extrascript %}
+    <script>
+        $("#id_category").change(function () {
+            var categoryId = $(this).val();
+            $.ajax({
+                url: '{% url "products:ajax_load_sub_category_data" %}',
+                data: {'category_id': categoryId},
+
+                success: function (data) {
+                    console.log(data);
+                    $id_subcategory = $('#id_subcategory').find('option').remove().end();
+                    $.each(data.sub_categories, function (i, item) {
+                        $id_subcategory.append($('<option>', {
+                            value: item.id,
+                            text: item.name
+                        }));
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}

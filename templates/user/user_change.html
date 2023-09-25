@@ -1,0 +1,423 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} STORELINKERS|edit user{% endblock %}
+{% load widget_tweaks %}
+
+{% block breadcrumbs %}
+
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{% url "index" %}">Home</a></li>
+            {% if not user.username == request.user.username %}
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{% url "accounts:user_list" %}">Users</a>
+            </li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">{{ user.username }}{{ request.user.username }}</li>
+            {% else %}
+                            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Profile</li>
+
+            {% endif %}
+</ol>
+    </nav>
+    <br>
+{% endblock %}
+{% block extrastyle %}
+    <link href="{% static "vendors/choices/choices.min.css" %}" rel="stylesheet"/>
+
+    <style>
+        .invalid {
+            background: url({% static "images/canceled.svg" %}) no-repeat 0 20%;
+            background-size: 16px 16px;
+
+            padding-left: 22px;
+            line-height: 24px;
+            color: #ec3f41;
+        }
+
+        .valid {
+            background: url({% static "images/ready.svg" %}) no-repeat 0 20%;
+            background-size: 16px 16px;
+
+            padding-left: 22px;
+            line-height: 24px;
+            color: #3a7d34;
+        }
+
+        #pswd_info {
+            display: none;
+        }
+
+        ul, li {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        form ul li {
+            margin: 10px 20px;
+
+        }
+
+        .row {
+            display: flex; /* equal height of the children */
+        }
+
+        .col {
+            flex: 1; /* additionally, equal width */
+
+            padding: 1em;
+        }
+
+    </style>
+{% endblock %}
+{% block content %}
+    <div >
+        <form method="post" enctype="multipart/form-data" autocomplete="off">
+            {% csrf_token %}
+            <div class="container">
+
+                {% if form.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger">
+                                {{ field.label }}
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-3 btn-reveal-trigger">
+                        <div class="card-header position-relative min-vh-25 mb-8">
+                            <div class="cover-image">
+                                <div class="bg-holder rounded-3 rounded-bottom-0"
+                                     style="background-image:url({% static "assets/img/generic/4.jpg" %});">
+                                </div>
+                                <!--/.bg-holder-->
+
+
+                            </div>
+                            <div class="avatar avatar-5xl avatar-profile shadow-sm img-thumbnail rounded-circle">
+                                <div class="h-100 w-100 rounded-circle overflow-hidden position-relative"><img
+                                        src="{{ user.photo_url }}" width="200" alt=""
+                                        data-dz-thumbnail="data-dz-thumbnail" id="avatar-image"/>
+                                    {% render_field form.avatar class+="d-none" id="profile-image" onchange="loadFile(event)" %}
+                                    <script>
+  var loadFile = function(event) {
+    var output = document.getElementById('avatar-image');
+    output.src = URL.createObjectURL(event.target.files[0]);
+    console.log("done")
+    output.onload = function() {
+      URL.revokeObjectURL(output.src) // free memory
+    }
+  };
+</script>
+                                    <label class="mb-0 overlay-icon d-flex flex-center" for="profile-image"><span
+                                            class="bg-holder overlay overlay-0"></span><span
+                                            class="z-index-1 text-white dark__text-white text-center fs--1"><span
+                                            class="fas fa-camera"></span><span
+                                            class="d-block">Mise à jour</span></span></label>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row g-0">
+                <div class="col-lg-8 pe-lg-2">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">Paramètres de profil</h5>
+                        </div>
+                        <div class="card-body bg-light">
+                            <div class="col-lg-12">
+
+                                {% render_field form.username class+="form-control" readonly="readonly" %}
+                            </div>
+                            <div class="col-lg-12">
+                                <label class="form-label" for="first-name">Prénom</label>
+                                {% render_field form.first_name class+="form-control" %}
+                            </div>
+                            <div class="col-lg-12">
+                                <label class="form-label" for="last-name">Nom de famille</label>
+                                {% render_field form.last_name class+="form-control" %}
+                            </div>
+                             <div class="col-lg-12">
+                                <label class="form-label" for="last-name">Marché</label>
+                                {% render_field form.marketplace class+="form-control" %}
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+
+                        <div class="card-header">
+                            <h5 class="mb-0">Groups & Permissions</h5>
+                        </div>
+                        <div class="card-body bg-light">
+                            {% if "auth.add_group" in request.user.get_all_permissions %}
+
+                                <div class="col-lg-12">
+                                    <label class="form-label" for="last-name">Groups</label>
+                                    {% render_field form.groups class="form-select js-choice" id="organizerMultiple" multiple="multiple" %}
+
+                                </div>
+                            {% endif %}
+
+                            {% if "auth.add_permission" in request.user.get_all_permissions %}
+
+                                <div class="col-lg-12">
+                                    <label class="form-label" for="last-name">Permissions</label>
+                                    {% render_field form.user_permissions class+="form-control js-choice" id="organizerMultiple" multiple="multiple" %}
+                                </div>
+
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class=" mb-3 center-this-mydude">
+                        <input type="submit" name="save_data" class="btn btn-primary"
+                               value="Mise à jour">
+
+                    <a href="{% url "accounts:user_logs" %}?id={{ user.id }}" class="btn btn-secondary" style="margin-left:1% ;margin-right:1%"> Journaux  </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 ps-lg-2">
+                    <div class="">
+                        <div class="card mb-3 overflow-hidden">
+
+                            <div class="card-header">
+                                <h5 class="mb-0">Paramètres du compte</h5>
+                            </div>
+                            <div class="card-body bg-light">
+                                 {% if request.user.is_superuser %}
+                                <h6 class="mt-2 fw-bold">Statut de l'utilisateur<span class="fs--2 ms-1 text-primary"
+                                                                                data-bs-toggle="tooltip"
+                                                                                data-bs-placement="top"
+                                                                                title="Only give this permissions to trusted ones. Removing the active status will disable the account."><span
+                                        class="fas fa-question-circle"></span></span></h6>
+
+                                <div class="form-check form-switch mb-0 lh-1">
+                                    {% render_field form.is_active class+="form-check-input" %}
+                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                                           checked="checked"/>
+                                    <label class="form-check-label mb-0" for="flexSwitchCheckDefault">Active
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-0 lh-1">
+                                    {% render_field form.is_staff class+="form-check-input" %}
+                                    <label class="form-check-label mb-0" for="flexSwitchCheckChecked">Personnel
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-0 lh-1">
+                                    {% render_field form.is_superuser class+="form-check-input" %}
+                                    <label class="form-check-label mb-0" for="flexSwitchCheckChecked">Superutilisateur
+                                    </label>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">Préférence</h5>
+                                <div class="form-check form-switch mb-0 lh-1">
+                                    {% render_field form.is_light class+="form-check-input" %}
+                                    <label class="form-check-label mb-0" for="flexSwitchCheckChecked">Mode lumière
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">Changer le mot de passe <input type="checkbox" id="pass_show" class="form-check-input"
+                                                                    onclick="show_password(this)"></h5>
+
+                        </div>
+                        <div class="card-body bg-light">
+                            <div class="mb-3">
+                                <div class="password_field">
+                                    <label class="form-label" for="old-password">nouveau mot de passe</label>
+
+                                    <input name="password" class="form-control" id="id_password" placeholder="password"
+                                           type="text" style="-webkit-text-security: disc;">
+                                </div>
+                                <div id="pswd_info">
+                                    <ul>
+                                        <li id="letter" class="invalid">At least <strong>une letter</strong></li>
+                                        <li id="capital" class="invalid">At least <strong>une lettre majuscule</strong>
+                                        </li>
+                                        <li id="number" class="invalid">At least <strong>un nombre</strong></li>
+                                        <li id="length" class="invalid">Be at least <strong>8 caractères</strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                {% if request.user.is_superuser %}
+                    <div class="card">
+
+
+                        <div class="card-header">
+                            <h5 class="mb-0">Danger Zone</h5>
+                        </div>
+                        <div class="card-body bg-light">
+
+                            <h5 class="fs-0">Delete this account</h5>
+                            <p class="fs--1">Once you delete a account, there is no going back. Please be certain.</p>
+                            {% if 'accounts.delete_user' in request.user.get_all_permissions %}
+
+
+                                <a class="btn btn-falcon-danger d-block" data-target="#modal_pk_1"
+                                   onclick="open_modal(this)">Delete Account</a>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                {% endif %}
+
+                </div>
+
+            </div>
+    </form>
+    </div>
+                <div class="modal" id="modal_pk_1" tabindex="-1" role="dialog"
+                     aria-hidden="true" style=" color:black">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">
+                                    Are you sure you want to delete the user {{ user.username }} ?
+                                </h5>
+                                <button type="button" class="close btn" data-dismiss="modal"
+                                        data-target="#modal_pk_1"
+                                        aria-label="Close" onclick="close_modal(this)">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" action="{% url "accounts:user_delete" pk=user.id %}">
+                                    {% csrf_token %}
+                                    <input type="submit" name="save_data"
+                                           style=" background-margin-left:1% ;color:white"
+                                           class="btn btn-primary" value="Confirm">
+
+                                </form>
+                            </div>
+
+
+                            <div class="modal-footer justify-content-between">
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+{% endblock %}
+
+{% block extrascript %}
+    <script src="{% static "vendors/choices/choices.min.js" %}"></script>
+
+    <script>
+        function show_password(item) {
+            var checked = $(item).is(":checked");
+            if (!checked) {
+                $(".password_field").hide()
+            } else {
+                $(".password_field").show()
+
+            }
+        }
+
+        $(document).ready(function () {
+
+            $('input[type=password]').keyup(function () {
+                let pswd = $(this).val();
+
+                if (pswd.match(/[A-z]/)) {
+                    $('#letter').removeClass('invalid').addClass('valid');
+                } else {
+                    $('#letter').removeClass('valid').addClass('invalid');
+                }
+
+//validate capital letter
+                if (pswd.match(/[A-Z]/)) {
+                    $('#capital').removeClass('invalid').addClass('valid');
+                } else {
+                    $('#capital').removeClass('valid').addClass('invalid');
+                }
+
+//validate number
+                if (pswd.match(/\d/)) {
+                    $('#number').removeClass('invalid').addClass('valid');
+                } else {
+                    $('#number').removeClass('valid').addClass('invalid');
+                }
+
+                if (pswd.length < 8) {
+                    $('#length').removeClass('valid').addClass('invalid');
+                } else {
+                    $('#length').removeClass('invalid').addClass('valid');
+                    //validate letter
+                }
+            }).focus(function () {
+                $('#pswd_info').show();
+            }).blur(function () {
+                $('#pswd_info').hide();
+            });
+
+        });
+    </script>
+    <script>
+
+        $(document).ready(function () {
+            $(".password_field").hide()
+
+            /* Centering the modal vertically */
+            function alignModal() {
+                let modalDialog = $(this).find(".modal-dialog");
+                modalDialog.css("margin-top", Math.max(0,
+                    ($(window).height() - modalDialog.height()) / 2));
+            }
+
+            $(".modal").on("shown.bs.modal", alignModal);
+
+            /* Resizing the modal according the screen size */
+            $(window).on("resize", function () {
+                $(".modal:visible").each(alignModal);
+            });
+        });
+    </script>
+    <script>
+        function close_modal(item) {
+            $($(item).data("target")).attr("style", "display:none")
+
+        }
+
+        function open_modal(item) {
+            console.log($(item).data("target"))
+            $($(item).data("target")).attr("style", "display:block")
+
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,508 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block extrastyle %}
+    <style>
+
+        .table {
+            display: table;
+            width: 100%;
+        }
+
+        .page-item.active .page-link {
+            z-index: 1;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.4) !important;
+            border-color: rgba(0, 0, 0, 0.4) !important;
+        }
+
+        .page-link:hover {
+            color: #0056b3 !important;
+
+            background-color: rgba(0, 0, 0, 0.4) !important;
+            border-color: rgba(0, 0, 0, 0.4) !important;
+        }
+
+        .btn:hover {
+            background: transparent
+        }
+
+        .rounded:placeholder-shown {
+            background: transparent
+        }
+    </style>
+{% endblock %}
+{% block content %}
+
+
+
+    <div class="clearfix">
+    <form method="get">
+        <div class=" ms-md-auto pe-md-3 d-flex align-items-center">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search"
+                       placeholder="Search" aria-label="Search" id="searchbar"
+                       aria-describedby="search-addon">
+            </div>
+            <button type="submit" style="margin-left:1% ;" class="btn btn-secondary"
+                    onclick=submitButtonClick(event)>Recherche
+            </button>
+
+                <button type="button" class="btn btn-falcon-default btn-sm actions_button" style="margin-left:1% ;"
+                        data-toggle="modal"
+                        data-dismiss="modal"
+
+                        data-target="#modal_pk_1" onclick="open_modal(this)">
+
+                    actions
+
+                </button>
+        </div>
+
+    </form>
+
+    <br>
+    <div style="top: 100px; margin-top:15rem; margin-left: 25px; position: absolute" id='loader'></div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="row flex-between-center">
+                <div class="col-4 col-sm-auto d-flex align-items-center pe-0">
+                    <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Ordres</h5>
+                </div>
+                <div class="col-8 col-sm-auto ms-auto text-end ps-0">
+                    <div id="orders-actions">
+                        {% if 'orders.add_order' in request.user.get_all_permissions %}
+                            <a href="{% url "orders:order_create" %}" class="btn btn-falcon-default btn-sm"><span
+                                    class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span><span
+                                    class="d-none d-sm-inline-block ms-1">Nouveau</span></a>
+                        {% endif %}
+                        <a class="btn btn-falcon-default btn-sm mx-2" href="{% url "orders:order_logs" %}"><span
+                                class="fas fa-filter" data-fa-transform="shrink-3 down-2"></span><span
+                                class="d-none d-sm-inline-block ms-1">Journaux</span></a>
+
+                        {% if 'orders.add_orderimports' in request.user.get_all_permissions %}
+
+
+
+                            <a href="{% url "orders:import_files" %}" class="btn btn-falcon-default btn-sm">
+                                <span class="fas fa-upload " data-fa-transform="shrink-3 down-2"></span><span
+                                    class="d-none d-sm-inline-block ms-1">csv</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar" id="add_message">
+                <div id="content">
+                    {% include "include/order_tr.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal " id="modal_pk_1" tabindex="-1" role="dialog"
+         aria-hidden="true" >
+        <div class="modal-dialog " role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                        Batch actions:
+                    </h5>
+                    <button type="button" class="close btn" data-dismiss="modal"
+                            data-target="#modal_pk_1"
+                            aria-label="Close" onclick="close_modal(this)">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body modal-dialog-scrollable mt-0">
+                    <input type="button" name="save_data" style=" background-margin-left:1% ;color:white"
+                           class="btn btn-primary order_actions" value="Delete" onclick="close_modal(this)">
+                    <input type="button" name="save_data" style=" background-margin-left:1% "
+                           class="btn btn-primary open_order_ship" value="Shipment" onclick="open_order_ship(this)">
+                    <input type="button" name="save_data" style=" background-margin-left:1% "
+                           class="btn btn-primary export_orders" value="Export" onclick="export_orders(this)">
+                    <input type="button" name="save_data" style=" background-margin-left:1% "
+                           class="btn btn-primary export_orders" value="Batch items" onclick="export_pdf(this)">
+                </div>
+
+
+                <div class="modal-footer justify-content-between">
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modal_pk_2" tabindex="-1" role="dialog"
+         aria-hidden="true" style=" color:black">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                        Batch actions:
+                    </h5>
+                    <button type="button" class="close  btn-primary" data-dismiss="modal"
+                            data-target="#modal_pk_1"
+                            aria-label="Close" onclick="close_modal(this)">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body modal-dialog-scrollable mt-0">
+                    <input type="button" name="save_data" style=" background-margin-left:1% ;color:white"
+                           class="btn order_ship  btn-primary" value="Shipment" onclick="close_modal(this)" disabled>
+                    <select id="carrier_select" onchange="enable_button()">
+                        <option value="">-----</option>
+                        {% for carrie in carrier %}
+                            <option value="{{ carrie.id }}">{{ carrie }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <div class="modal-footer justify-content-between">
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+{% block title %} STORELINKERS| commande {% endblock title %}
+
+{% block extrascript %}
+    {{ block.super }}
+    <script>
+     $(document).on('click', '#actions_toggle', function (event) {
+        $("#modal_pk_1").show();
+     })
+        $(document).ready(function () {
+            $(".actions_button").hide()
+        });
+        $(document).on('click', '#selectable_table', function (event) {
+            if ($("input:checkbox:checked").length > 0) {
+                $(".actions_button").show()
+            } else {
+                $(".actions_button").hide()
+            }
+
+        });
+
+        function open_order_ship(item) {
+            $("#modal_pk_1").hide()
+            $(".modal-backdrop").removeClass("modal-backdrop")
+            $("#modal_pk_2").show()
+        }
+
+        function enable_button(item) {
+            if ($("#carrier_select").val()) {
+                $(".order_ship").removeAttr("disabled")
+            } else {
+                $(".order_ship").attr("disabled", "disabled")
+            }
+        }
+
+        function close_modal(item) {
+            $("#modal_pk_1").hide()
+            $("#modal_pk_2").hide()
+            $(".modal-backdrop").removeClass("modal-backdrop")
+
+        }
+
+        function open_modal(item) {
+            $("#modal_pk_1").show()
+
+        }
+
+        function export_orders(item) {
+            close_modal()
+            var elem = [];
+            $("input:checkbox[name=chk]:checked").each(function () {
+                elem.push($(this).attr("id"))
+            });
+            let url = "{% url 'orders:export_bulk' %}";
+            $("#add_message").prepend(`<div class="temporary"><div style="max-width:80%; margin-left:10%;" class="alert alert-warning">
+                <li class="order_tr error">Traitement de votre exportation.</li>
+            </div></div>`)
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    "order_list": elem,
+
+
+                },
+                headers: {'X-CSRFToken': "{{ csrf_token }}"}
+            }).done(function (data) {
+                $(".temporary").html("")
+                $("#add_message").prepend(`<div style="max-width:80%; margin-left:10%;" class="alert alert-info temporary">
+                <li class="order_tr error">Commandes exportées avec succès.</li>
+            </div>`)
+                console.log(data)
+                var win = window.open(data.file, '_blank');
+                if (win) {
+                    //Browser has allowed it to be opened
+                    win.focus();
+                } else {
+                    //Browser has blocked it
+                    alert('Please allow popups for this website');
+                }
+                let search = $("#searchbar").val();
+                let page = 1;
+                let value_of_sort = "-created_at";
+                let url = "{{ request.get_full_path }}"
+                $("tbody").attr("class", "changelist-form");
+                $(".changelist-form").hide();
+                $("#loader").show();
+                let object_id = "{% if request.GET.id %}{{ request.GET.id }}{% endif %}"
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    data: {
+                        "page": page,
+                        "search": search,
+                        "ajax": "a",
+                        "id": object_id,
+                        "sort_value": value_of_sort,
+                    }
+
+                }).done(function (data) {
+                    $("#content").html("")
+                    $("#content").html(data)
+
+                    $("#loader").hide();
+
+                    (function ($) {
+                        $(document).ready(function () {
+                            $(".changelist-form").show();
+                            $("#loader").hide();
+                            $(".action-counter").hide();
+                        });
+                    })(window.jQuery);
+                })
+            });
+
+        }
+
+        $(".order_actions").on("click", function () {
+            var elem = [];
+            $("input:checkbox[name=chk]:checked").each(function () {
+                elem.push($(this).attr("id"))
+            });
+            let url = "{% url 'orders:delete_bulk' %}";
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    "order_list": elem,
+
+
+                },
+                headers: {'X-CSRFToken': "{{ csrf_token }}"}
+            }).done(function (data) {
+                let search = $("#searchbar").val();
+                let page = 1;
+                let value_of_sort = "-created_at";
+                let url = "{{ request.get_full_path }}"
+                $("tbody").attr("class", "changelist-form");
+                $(".changelist-form").hide();
+                $("#loader").show();
+                let object_id = "{% if request.GET.id %}{{ request.GET.id }}{% endif %}"
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    data: {
+                        "page": page,
+                        "search": search,
+                        "ajax": "a",
+                        "id": object_id,
+                        "sort_value": value_of_sort,
+                    }
+
+                }).done(function (data) {
+                    $("#content").html("")
+                    $("#content").html(data)
+
+                    $("#loader").hide();
+
+                    (function ($) {
+                        $(document).ready(function () {
+                            $(".changelist-form").show();
+                            $("#loader").hide();
+                            $(".action-counter").hide();
+                        });
+                    })(window.jQuery);
+                })
+            });
+        });
+
+        function export_pdf(item) {
+            close_modal()
+            var elem = [];
+            $("input:checkbox[name=chk]:checked").each(function () {
+                elem.push($(this).attr("id"))
+            });
+            let url = "{% url 'orders:export_pdf' %}";
+            $("#add_message").prepend(`<div class="temporary"><div style="max-width:80%; margin-left:10%;" class="alert alert-warning">
+                <li class="order_tr error">Traitement de votre exportation.</li>
+            </div></div>`)
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    "order_list": elem,
+                    "status": "{{ request.GET.status }}"
+
+
+                },
+                headers: {'X-CSRFToken': "{{ csrf_token }}"}
+            }).done(function (data) {
+                var blob = new Blob([data]);
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = "export.pdf";
+                link.click();
+                $(".temporary").html("")
+                $("#add_message").prepend(`<div style="max-width:80%; margin-left:10%;" class="alert alert-info temporary">
+                <li class="order_tr error">Commandes exportées avec succès.</li>
+            </div>`)
+                console.log(data)
+
+                let search = $("#searchbar").val();
+                let page = 1;
+                let value_of_sort = "-created_at";
+                let url = "{{ request.get_full_path }}"
+                $("tbody").attr("class", "changelist-form");
+                $(".changelist-form").hide();
+                $("#loader").show();
+                let object_id = "{% if request.GET.id %}{{ request.GET.id }}{% endif %}"
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    data: {
+                        "page": page,
+                        "search": search,
+                        "ajax": "a",
+                        "id": object_id,
+                        "sort_value": value_of_sort,
+                    }
+
+                }).done(function (data) {
+                    $("#content").html("")
+                    $("#content").html(data)
+
+                    $("#loader").hide();
+
+                    (function ($) {
+                        $(document).ready(function () {
+                            $(".changelist-form").show();
+                            $("#loader").hide();
+                            $(".action-counter").hide();
+                        });
+                    })(window.jQuery);
+                })
+            });
+
+        }
+        $('#selectable_table').on('click', '.clickable', function(event) {
+    var checkbox = $(this).find(":checkbox");   // keep reference of checkbox
+           var checked =$(this).is(":checked");
+   if ( !checked)
+    {
+        $(this).parent().parent().removeClass('highlight_table_color');
+    }
+    else{
+  $(this).parent().parent().addClass('highlight_table_color');
+
+    }
+            checkbox.attr("checked", checked);
+
+}).on('click','#select_all', function() {
+    var checkbox = $(this).find(":checkbox");   // keep reference of checkbox
+           var checked = checkbox.is(":checked");
+$('#select_all_items > tr').each(function () {
+    var checkbox1 = $(this).find(":checkbox");
+    checked=$("#select_all").is(":checked")
+   if ( !checked)
+    {
+        $(this).removeClass('highlight_table_color');
+    }
+    else{
+  $(this).addClass('highlight_table_color');
+
+    }
+            checkbox1.prop("checked", checked);
+
+
+});
+
+});
+    </script>
+    <script>
+
+        $(".order_ship").on("click", function () {
+            var elem = [];
+            $("input:checkbox[name=chk]:checked").each(function () {
+                elem.push($(this).attr("id"))
+            });
+            let url = "{% url 'orders:move_to_ship' %}";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    "order_list": elem,
+                    "carrier_id": $("#carrier_select").val()
+
+                },
+                headers: {'X-CSRFToken': "{{ csrf_token }}"}
+            }).done(function (data) {
+                let search = $("#searchbar").val();
+                let page = 1;
+                let value_of_sort = "-created_at";
+                console.log("{{ request.get_full_path }}")
+                let url = "{{ request.get_full_path }}"
+                $("tbody").attr("class", "changelist-form");
+                $(".changelist-form").hide();
+                $("#loader").show();
+                let object_id = "{% if request.GET.id %}{{ request.GET.id }}{% endif %}"
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    data: {
+                        "page": page,
+                        "search": search,
+                        "ajax": "a",
+                        "id": object_id,
+                        "sort_value": value_of_sort,
+                    }
+
+                }).done(function (data) {
+                    $("#content").html("")
+                    $("#content").html(data)
+
+                    $("#loader").hide();
+
+                    (function ($) {
+                        $(document).ready(function () {
+                            $(".changelist-form").show();
+                            $("#loader").hide();
+                            $(".action-counter").hide();
+                        });
+                    })(window.jQuery);
+                })
+            });
+        });
+
+
+    </script>
+{% endblock %}

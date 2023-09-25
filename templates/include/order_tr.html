@@ -1,0 +1,150 @@
+{% load i18n static %}
+<div class="table-responsive scrollbar">
+    {% block extrastyle %}
+        <link href="{% static "assets/css/custom.css" %}" rel="stylesheet" id="style-rtl">
+
+    {% endblock %}
+    {% for message in messages %}
+        {% if  "order_tr" in message.tags %}
+
+            <div style="max-width:80%; margin-left:10%;"
+                 class="alert alert-{% if "error" in message.tags %}warning{% else %}success{% endif %}">
+
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            </div>
+        {% endif %}
+
+    {% endfor %}
+
+    <table class="table table-bordered table-striped fs--1 mb-0" id="selectable_table">
+        <thead class="bg-200 text-900">
+        <tr>
+            <th class=" text-center pe-1 align-middle white-space-nowrap "><input
+                    class="form-check-input" type="checkbox" id="select_all"></th>
+            <th class="sortable pe-1 align-middle white-space-nowrap "
+                {% if sort_value == "-order_number" %}sorted="1"{% endif %} onclick="sort_by(this)">
+                {% if sort_value == "-order_number" %}Numéro de commande
+                    <span class='caret-4-asc'></span>{% elif sort_value == "order_number" %}Numéro de commande
+                    <span class='caret-4-desc'></span>{% else %}Numéro de commande{% endif %}</th>
+            <th class="sortable  pe-1 align-middle white-space-nowrap "
+                {% if sort_value == "-created_at" %}sorted="1"{% endif %} onclick="sort_by(this)">
+                {% if sort_value == "-created_at" %}Créé à
+                    <span class='caret-4-asc'></span>{% elif sort_value == "created_at" %}Créé à
+                    <span class='caret-4-desc'></span>{% else %}Créé à{% endif %}</th>
+            <th class="pe-1 align-middle white-space-nowrap ">Articles</th>
+            {% if request.GET.status == "OS" or request.GET.status == "D" %}
+                <th class="pe-1 align-middle white-space-nowrap ">Code de suivi
+                </th>
+                <th class="pe-1 align-middle white-space-nowrap ">Dernière Activité
+                </th>
+                <th class="pe-1 align-middle white-space-nowrap ">Transporteur
+                </th>
+
+
+            {% endif %}
+            <th class="sortable pe-1 align-middle white-space-nowrap "
+                {% if sort_value == "-state" %}sorted="1"{% endif %} onclick="sort_by(this)">
+                {% if sort_value == "-state" %}State<span class='caret-4-asc'></span>{% elif sort_value == "state" %}
+                    État<span class='caret-4-desc'></span>{% else %}État{% endif %}</th>
+            <th class="sortable pe-1 align-middle white-space-nowrap "
+                {% if sort_value == "-zip_code" %}sorted="1"{% endif %} onclick="sort_by(this)">
+                {% if sort_value == "-zip_code" %}Code postal
+                    <span class='caret-4-asc'></span>{% elif sort_value == "zip_code" %}Code postal
+                    <span class='caret-4-desc'></span>{% else %}Code postal{% endif %}</th>
+            <th class="pe-1 align-middle white-space-nowrap ">Destinataire</th>
+            <th class="pe-1 align-middle white-space-nowrap ">Origine</th>
+            <th class="pe-1 align-middle white-space-nowrap ">Total</th>
+            <th class="pe-1 align-middle white-space-nowrap ">Créé par</th>
+
+            <th class="text-secondary opacity-7"></th>
+        </tr>
+        </thead>
+        <tbody id="select_all_items" class="list">
+        {% for order in orders %}
+
+
+            <tr class="">
+                <td><input class="form-check-input checbox clickable" type="checkbox" name="chk" id="{{ order.id }}">
+                </td>
+                <td>
+                    <p class="text-xs font-weight-bold mb-0"><a style="color :#5e6e82"
+                                                                {% if 'orders.change_order' in request.user.get_all_permissions %}href="{% url 'orders:change_list' pk=order.id %}"{% endif %}>{{ order.order_number }} </a>
+                    </p>
+                </td>
+                <td>
+                    <p class="text-xs font-weight-bold mb-0">{{ order.created_at }}</p>
+                </td>
+                <td>
+                    {% for item in order.items %}
+                        <div class="d-flex px-1 py-2">
+                            <div>
+                                <img src="
+
+
+                                        {% if item.linked_item.image_url %}{{ item.linked_item.image_url.url }}{% else %} {% static "images/default_product1.png" %}{% endif %}"
+                                     class="circular--landscape" alt="user1">
+                            </div>
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">{{ item.original_product.name }}</h6>
+                                <p class="text-xs text-secondary mb-0">{{ item.original_product.sku }}</p>
+                                <p class="text-xs text-secondary mb-0">Qte: {{ item.quantity }}</p>
+                            </div>
+                            <div class="d-flex flex-column  px-3 justify-content-left">
+                                <img src="{% static "images/boxes.png" %}" width="16px"
+                                     height="16px">{% if item.linked_item %}
+                                {{ item.linked_item.stock|default_if_none:0 }} {% else %}UC{% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </td>
+                {% if request.GET.status == "OS" or request.GET.status == "D" %}
+
+                    <td class="align-middle text-center text-sm">
+                        {{ order.shipment.tracking_code }}
+                    </td>
+                    <td class="align-middle text-center text-sm">
+                        {{ order.activity.description }}
+                    </td>
+                    <td class="align-middle text-center text-sm">
+                        {{ order.shipment.carrier }}
+                    </td>
+                {% endif %}
+                <td class="align-middle text-center text-sm">
+                    {{ order.state }}
+                </td>
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">{{ order.zip_code }}</span>
+                </td>
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">{{ order.customer_name }},
+                        {{ order.street_1 }}{% if order.street_2 %}
+                            {{ order.street_2 }}
+                        {% endif %} </span>
+                </td>
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">{{ order.origin }}</span>
+                </td>
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">{{ order.total_price|default_if_none:"-" }}</span>
+                </td>
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">{{ order.user|default_if_none:"-" }}</span>
+                </td>
+                <td class="align-middle">
+                    {% if 'orders.change_order' in request.user.get_all_permissions %}
+
+                        <a href="{% url 'orders:change_list' pk=order.id %}"
+                           class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
+                           data-original-title="Edit user">
+                            Modifier
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% include "pagination.html" %}
+</div>

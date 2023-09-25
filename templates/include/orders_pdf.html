@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+<style>
+     @page {
+            size: A5;
+            margin: 0;
+        }
+  .barcode-image {
+    width: 200px;
+    height: 60px;
+    margin: 10px;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+       font-size: 0;
+}
+     p {
+    text-align: justify;
+  }
+    .div2 {
+
+            margin-top: 0;
+
+            page-break-before: always;
+        }
+.custom-table {
+    border-collapse: collapse;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+
+
+
+  }
+.custom-table td p {
+    text-align: justify;
+
+}
+.cadre {
+     page-break-before: always;
+
+}
+
+  .custom-table th, .custom-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+   .custom-table2 td {
+       padding: 2px;
+       text-align: left;
+   }
+
+
+  .custom-table th {
+
+  }
+
+  .custom-table tr:hover {
+    background-color: #f5f5f5;
+  }
+</style>
+        <script src="{% static 'js/datetime.js' %}"></script>
+
+</head>
+
+<body  onload="getCurrentDateTime()">
+
+    <!-- Content for Static Frame 'header_frame' -->
+
+
+    <!-- Content for Static Frame 'footer_frame' -->
+
+
+    <!-- HTML Content -->
+
+
+{% for order in orders %}
+    <div class="cadre">
+<table class="custom-table2" border="1px" cellspacing="5">
+        <thead>
+        <tr>
+        <td colspan="2"> <p style="font-size:12px;"> <img src="C:\Users\MSI\Desktop\boujarrait-logistics-project-795e86ed1bec\static\images\img_4.png" width="200" height="45" alt="Description of the image"><br>MF: 1736403 M/A/M/000 </p> </td>
+            <td colspan="2"> <strong style="font-size:16px;"> Bon de livraison N°: {{ order.order_number }}
+              </strong></td>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr>
+
+           <td rowspan="1" colspan="2">
+                <p style="font-size:16px;">
+
+                    <strong>EXPÉDITEUR➔</strong><br>
+                    Nom: {{ order.marketplace.name }}<br>
+                    Téléphone: {{ order.marketplace.phone }}<br>
+                    Adresse: {{ order.marketplace.address }}
+                </p>
+            </td>
+            <td rowspan="1" colspan="2">
+                <p style="font-size:16px;">
+                    <strong>DESTINATAIRE➔</strong><br>
+                    Nom: {{ order.customer_name }} <br>
+                    Téléphone: {{ order.phone }}<br>
+                    Adresse: {{ order.client_address }}<br>
+                    Ville: {{ order.client_ville }}
+                </p>
+            </td>
+
+        </tr>
+
+        </tbody>
+    </table>
+<table border="1px" cellspacing="5">
+    <thead>
+    <tr style="font-size:12px;">
+    <th><br>Remarque</th>
+    <th><br>Service</th>
+    <th><br>Date création</th>
+    <th><br> P.U.</th>
+    <th><br>Quantité</th>
+    <th><br>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr style="font-size:12px;">
+        <td>{{ order.note }}<br></td>
+        <td><br>{{ order.t_service }}</td>
+        <td> <br>{{ order.created_at }}</td>
+        <th><br>{{ order.total_price }}</th>
+        <th><br>1</th>
+        <th><br>{{ order.total_sans_tva }}</th>
+    </tr>
+    <tr style="font-size:12px;"v>
+        <th colspan="4"><br>Référence (produit)</th>
+        <th><br>Total</th>
+        <th><br> {{ order.total_sans_tva }} </th>
+    </tr>
+    <tr style="font-size:12px;">
+        <th rowspan="2" colspan="4"><br>XXXXXXXXX</th>
+        <th><br>TVA</th>
+        <th><br>19%</th>
+    </tr>
+     <tr style="font-size:12px;">
+        <th><br>Total</th>
+        <th><br>{{ order.total }}</th>
+    </tr>
+    </tbody>
+</table>
+<table  border="3px" cellspacing="5">
+    <tr>
+        {% load static %}
+        <th><p style="font-size:17px;">Cachet/Signature<br><br></p></th>
+        <td > <b style="font-size:17px;"><br>
+                     {{ order.nom_partenaire }} >> N°: &nbsp;&nbsp;{{ order.code_partenaire }}<br><br>
+            <div >
+                    <img src="{{ order.barcode_filename }}" alt="Barcode" class="barcode-image"></div></b><br>
+
+                </br>
+        </td>
+    </tr>
+</table>
+    <br>
+
+    <br>
+    </div>
+{% endfor %}
+
+<div class="div2">
+<br>
+    <table>
+        <tbody>
+        <tr ><th></th>
+            <th colspan="3" style=" font-size:15px;" >
+                <p >
+                MF:xxxxxxxxxxxxxxxxx<br>
+                TEL:99999999<br>
+                Adresse :Ave Yasser Arafet,Sousse,Tunisie<br>
+            </p>
+
+            </th>
+
+
+
+
+
+        </tr>
+        </tbody>
+    </table><br><br>
+<table  class="custom-table" border="1px" cellspacing="1"  width = "100%"
+             height="600px">
+<tbody>
+    <tr>
+          <th style="font-size:16px;">Code à bare</th>
+          <th style="font-size:16px;">Client</th>
+          <th style="font-size:16px;">Ville</th>
+          <th colspan="2" style="font-size:16px;">Adresse client</th>
+          <th style="font-size:16px;">Service</th>
+          <th style="font-size:16px;">COD</th>
+
+    </tr>
+</tbody>
+<thead>
+    {% for order in orders %}
+    <tr>
+
+         <td style="font-size:16px;">xxxxx</td>
+         <td style="font-size:16px;"><p>{{ order.customer_name }}</p></td>
+         <td style="font-size:16px;"><p>{{ order.client_ville }}</p></td>
+         <td colspan="2" style="font-size:16px;"><p>{{ order.client_address }}</p></td>
+         <td style="font-size:16px;">{{ order.t_service }}</td>
+         <td style="font-size:16px;">{{ order.total }}</td>
+
+
+    </tr>
+    {% endfor %}
+</thead>
+</table>
+    <br>
+    <br>
+
+
+<table>
+    <tr>
+        <td colspan="2" style="font-size:14px;"><p>Date collecte<br>
+          .................</p></td>
+        <td colspan="2" style="font-size:14px;"><p>Nom chauffeur<br>
+          .................</p></td>
+        <td colspan="2" style="font-size:14px;"><p>Signature client<br>
+          .................</p></td>
+        <td colspan="2" style="font-size:14px;"><p>Signature chauffeur<br>
+          .................</p></td>
+
+    </tr>
+
+</table>
+</div>
+
+
+
+</body>
+
+</html>

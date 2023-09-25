@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} STORELINKERS| add Address {% endblock title %}
+{% load widget_tweaks %}
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{% url "index" %}">Home</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark"
+                                                   href="{% url "marketplace:market_list" %}">Marché</a>
+            </li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Créer</li>
+
+        </ol>
+    </nav>
+    <br>
+{% endblock %}
+{% block extrastyle %}
+    <style>
+        ul, li {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        form ul li {
+            margin: 10px 20px;
+
+        }
+
+        .row {
+            display: flex; /* equal height of the children */
+        }
+
+        .col {
+            flex: 1; /* additionally, equal width */
+
+            padding: 1em;
+        }
+
+    </style>
+{% endblock %}
+{% block content %}
+    <form id="myform" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ field.label }}: {{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row ">
+            <div class="col-lg-11 pe-lg-2">
+                <div class="card mb-0">
+                    <div class="card-header">
+                        <h5 class="mb-0">Paramètres du Marché</h5>
+                    </div>
+                    <div class="card-body bg-light">
+                        <div class="row gx-2">
+                            <div class="col-sm-6 mb-3">
+
+                                <label>Nom:</label>
+                                {% render_field form.name class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+
+                                <label>Responsable:</label>
+                                {% render_field form.responsable class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+
+                                <label>Téléphone:</label>
+                                {% render_field form.phone class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+
+                                <label>Email:</label>
+                                {% render_field form.email class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+
+                                <label>Adresse :</label>
+                                {% render_field form.address class+="form-control" %}<br>
+                            </div>
+                             <div class="col-sm-4 mb-3">
+                                <label>Code postal:</label>
+                                {% render_field form.code_postale class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+
+                                <label>Image :</label>
+                                {% render_field form.img class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+
+                                <label>Rib :</label>
+                                {% render_field form.rib class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                <label>Numéro d'enregistrement fiscal :</label>
+                                {% render_field form.mf class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                <label>Numéro de commande :</label>
+                                {% render_field form.nb_order class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                <label>Tentative :</label>
+                                {% render_field form.tentative class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                <label>Frais de livraison :</label>
+                                {% render_field form.low_delivery class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                <label>Frais de retour(petit) :</label>
+                                {% render_field form.low_return class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                <label>Frais de livraison et emballage :</label>
+                                {% render_field form.high_delivery class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                <label>Frais de retour(grand) :</label>
+                                {% render_field form.high_return class+="form-control" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                <label>Secteur:</label>
+                                {% render_field form.secteur class+="form-select" %}<br>
+                            </div>
+                            <div class="col-sm-4 mb-3">
+                                <label>Transporteur:</label>
+                                {% render_field form.carrier class+="form-select" %}<br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div style="" class="row">
+            <div clas="col">
+                <input type="submit" name="save_data" class="btn btn-primary" value="Create">
+
+            </div>
+        </div>
+
+
+    </form>
+
+
+
+
+
+
+{% endblock %}
+{% block extrascript %}
+
+    <script>
+        $('#myform').submit(function (e) {
+
+            console.log("submitted");
+        });
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends 'base.html'%}
+{% load static %}
+{% load widget_tweaks %}
+
+
+{% block extrastyle %}
+    <style>
+
+
+    .page-item.active .page-link {
+    z-index: 1;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border-color: rgba(0, 0, 0, 0.4) !important;
+}
+    .page-link:hover {
+    color: #0056b3 !important;
+
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border-color: rgba(0, 0, 0, 0.4)!important;
+}
+    .btn:hover{
+        background:transparent
+    }
+    .rounded:placeholder-shown{
+        background:transparent
+    }
+            </style>
+{% endblock %}
+{% block content %}
+    <div >
+    <h1>Filtres d'exportation:</h1>
+        <form id="myform" method="post" >
+        {% csrf_token %}
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+<div class="content">
+
+            <div class="row">
+                <div class="col-lg-8 pe-lg-2">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">Détails du client</h5>
+                        </div>
+                        <div class="card-body bg-light">
+
+                            <div class="row gx-2">
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Statut de la commande</label>
+                                    {% render_field form.order_status class+="form-control" %}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label" for="start-date">Nom du client</label>
+                                    {% render_field form.carrier class+="form-control" %}
+
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label" for="start-time">Date de début:</label>
+                                    {% render_field form.creation_date_start class+="form-control" %}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label" for="end-date">Date de fin:</label>
+                                    {% render_field form.creation_date_finish class+="form-control" %}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label" for="registration-deadline">État</label>
+                                    {% render_field form.state class+="form-control" %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                <input type="submit" name="save_data" style="margin-left:1%" class="btn btn-primary" value="Export">
+
+                </div>
+            </div>
+        </div>
+
+
+    </form>
+    <h1>Exporter la liste:</h1>
+    <form>
+      <div class=" ms-md-auto pe-md-3 d-flex align-items-center">
+ <div class="input-group">
+              <input type="text" class="form-control" placeholder="Type here..."  name="search" placeholder="Search" aria-label="Search" id="searchbar"
+    aria-describedby="search-addon">
+            </div>
+  <button type="submit" style="margin-left:1% ;" class="btn btn-secondary" onclick=submitButtonClick(event)>Recherche</button>
+</form>
+
+    </div>
+    <br>
+<div id="content">
+        <div id='loader'></div>
+
+    {% include "include/order_export_tr.html" %}
+    </div>
+
+
+{% endblock %}
+{% block extrascript %}
+
+ <script type="text/javascript" >
+
+(function ($) {
+            $(document).ready(function () {
+                $(".changelist-form").show();
+                $("#loader").hide();
+
+
+
+
+							});
+
+
+
+
+
+        })(window.jQuery);
+
+
+
+
+
+
+
+        </script>
+
+{% endblock %}
+
+    {% block title %} STORELINKERS| commandes d'importation {% endblock title %}

@@ -1,0 +1,141 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block title %} STORELINKERS| modifications des journaux {% endblock  %}
+
+
+{% block extrastyle %}
+    <style>
+
+    .table {
+  display: table;
+  width: 100%;
+}
+
+    .page-item.active .page-link {
+    z-index: 1;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border-color: rgba(0, 0, 0, 0.4) !important;
+}
+    .page-link:hover {
+    color: #0056b3 !important;
+
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border-color: rgba(0, 0, 0, 0.4)!important;
+}
+    .btn:hover{
+        background:transparent
+    }
+    .rounded:placeholder-shown{
+        background:transparent
+    }
+            </style>
+{% endblock %}
+{% block content %}
+    <div style="max-width:80%; margin-left:10%; margin-bottom:5%">
+
+    <form method="get">
+              <div class="input-group">
+
+  <input type="search" class="rounded" name="search" placeholder="Search" aria-label="Search"
+    aria-describedby="search-addon" />
+
+  <button type="submit" style="margin-left:1% ;" class="btn btn-primary">Recherche</button>
+              </div>
+
+    </form>
+<form method="post">
+                                {% csrf_token %}
+       <button type="submit" style="margin-left:650px ;" class="btn btn-primary" >mettre à jour les éléments</button>
+</form>
+
+    </div>
+    <div style="top: 100px; margin-top:15rem; margin-left: 25px; position: absolute" id='loader'></div>
+    <table style="max-width:80%; margin-left:10%;{% if request.user.is_light %} color:black {% else %}color:white{% endif %} " class="table {% if request.user.is_light %} table-light {% else %} table-dark {% endif %} changelist-form">  <thead>
+    <tr>
+      <th scope="col">Utilisateur </th>
+        <th scope="col">Statu</th>
+      <th scope="col">Commencé à</th>
+      <th scope="col">Terminé à</th>
+      <th scope="col">temps de mise à jour</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for user in data %}
+
+    <tr>
+      <th scope="row">{{ user.user }}</th>
+      <td>{{ user.status }}</td>
+      <td>{{ user.created_at }}</td>
+      <td>{{ user.finished_at }}</td>
+        <td>{{ user.duration|floatformat:2 }}{% if user.duration  %} secs {% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+    {% if is_paginated %}
+     <ul class="pagination" style="max-width:80%; margin-left:10%;color:white " >
+             {% if data.has_previous %}
+
+    <li class="page-item    ">
+      <a class="page-link" href="?page={{data.previous_page_number}}&search={{ request.GET.search }}" tabindex="-1">Previous</a>
+    </li>
+                 {% else %}
+                 <li class="page-item disabled">
+      <a class="page-link"  tabindex="-1">Previous</a>
+    </li>
+                         {% endif %}
+    {% for i in data.paginator.page_range %}
+        {% if list.number == i %}
+           <li class="page-item active">
+      <a class="page-link" > {{ i }}</a>
+    </li>
+      {% else %}
+
+    <li class="page-item"><a class="page-link" href="?page={{ i }}&search={{ request.GET.search }}">{{ i }}</a></li>
+          {% endif %}
+         {% endfor %}
+{% if data.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{data.next_page_number}}&search={{ request.GET.search }}">Next</a>
+    </li>
+
+     {% else %}
+    <li class="page-item disabled">
+      <a class="page-link" >Next</a>
+    </li>
+    {% endif %}
+    <p style="color:white;margin-left:30px">{{ data|length }} of {{ total }}</p>
+  </ul>
+          {% endif %}
+
+{% endblock %}
+{% block extrascript %}
+
+ <script type="text/javascript" >
+
+(function ($) {
+            $(document).ready(function () {
+                $(".changelist-form").show();
+                $("#loader").hide();
+
+
+
+
+							});
+
+
+
+
+
+        })(window.jQuery);
+
+
+
+
+
+
+
+        </script>
+
+{% endblock %}

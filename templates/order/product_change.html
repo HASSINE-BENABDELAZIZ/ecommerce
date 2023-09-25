@@ -1,0 +1,535 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{% url "index" %}">Home</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{% url "orders:order_list" %}">Orders</a>
+            </li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">{{ order.order_number }}</li>
+        </ol>
+    </nav>
+    <br>
+{% endblock %}
+
+{% block extrastyle %}
+    <style>
+        .disable-select {
+            pointer-events: none;
+        }
+
+        .invalid {
+            background: url({% static "images/canceled.svg" %}) no-repeat 0 20%;
+            background-size: 16px 16px;
+
+            padding-left: 22px;
+            line-height: 24px;
+            color: #ec3f41;
+        }
+
+        .notefield {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+        }
+
+        .valid {
+            background: url({% static "images/ready.svg" %}) no-repeat 0 20%;
+            background-size: 16px 16px;
+
+            padding-left: 22px;
+            line-height: 24px;
+            color: #3a7d34;
+        }
+
+        #pswd_info {
+            display: none;
+        }
+
+        ul, li {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        form ul li {
+            margin: 10px 20px;
+
+        }
+
+        .row {
+            display: flex; /* equal height of the children */
+        }
+
+        .col {
+            flex: 1; /* additionally, equal width */
+
+            padding: 1em;
+        }
+
+    </style>
+{% endblock %}
+{% block content %}
+    <form method="post" action="{% url "orders:change_list" pk=order.id %}">
+        {% csrf_token %}
+        {% if order_items_formset.errors %}
+            {% for form in order_items_formset %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+
+                        <div class="alert alert-danger">
+                            <strong>{{ field.label }} {{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+            {% for error in order_items_formset.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ field.label }}{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+
+
+
+        <div class="content">
+
+            <div class="row g-0">
+                <div class="col-lg-8 pe-lg-2">
+                    {% if  request.user.is_superuser and request.user.is_staff %}
+                <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">Details Fournisseur</h5>
+                        </div>
+                        <div class="card-body bg-light">
+
+                            <div class="row gx-2">
+                                 {% if "admin" in request.user.groups.all or request.user.is_superuser %}
+                                    <div class="mb-3">
+                                        <div class=" flex-between-center">
+                                            <label class="form-label" for="id_marketplace">Fournisseur:</label>
+                                            {% render_field form.marketplace class+="form-select" %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="col-12">
+                                    <div class="border-dashed-bottom my-3"></div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="event-delegation">Délégation expéditeur (*)</label>
+                                    {% render_field form.expiditeur_deligaiton class+="form-select" %}
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="event-ville">Ville expéditeur (*)
+                                    </label>
+                                    {% render_field form.expiditeur_ville class+="form-select" %}
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="event-cite">Cité expéditeur(*)</label>
+                                            {% render_field form.expiditeur_cite class+="form-select" %}
+                                </div>
+                            <div class="col-sm-6 mb-3">
+                                    <label class="form-label" for="start-date">code postal expéditeur</label>
+                                    {% render_field form.expiditeur_zipcode class+="form-control" %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                {% endif %}
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">Customer Details</h5>
+                        </div>
+                        <div class="card-body bg-light">
+
+                            <div class="row gx-2">
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Customer email</label>
+                                    {% render_field form.customer_email class+="form-control" %}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label" for="start-date">Customer Name</label>
+                                    {% render_field form.customer_name class+="form-control" %}
+
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label" for="start-time">Phone</label>
+                                    {% render_field form.phone class+="form-control" %}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label" for="end-date">Company</label>
+                                    {% render_field form.company class+="form-control" %}
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="border-dashed-bottom my-3"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="event-zipcode">Adresse client (*)</label>
+                                            {% render_field form.client_address class+="form-control" %}
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="event-delegation">Délégation client (*)</label>
+                                    {% render_field form.client_deligaiton class+="form-select" %}
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="event-ville">Ville client (*)
+                                    </label>
+                                    {% render_field form.client_ville class+="form-select" %}
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="event-cite">Cité client (*)</label>
+                                            {% render_field form.client_cite class+="form-select" %}
+                                </div>
+                                 <div class="col-sm-6">
+                                    <label class="form-label" for="event-zipcode">Code postal (*)</label>
+                                            {% render_field form.client_zipcode class+="form-control" %}
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">Order Items</h5>
+                        </div>
+
+                        {{ order_items_formset.hidden_fields }}
+                        {{ order_items_formset.management_form }}
+                        {{ order_items_formset.non_form_errors }}
+                        {{ order_items_formset.form_errors }}
+                        <div class="card-body bg-light">
+                            <table class="table table-bordered mt-3 bg-white dark__bg-1100">
+                                <thead>
+                                <tr class="fs--1">
+                                    <th>Produit</th>
+                                    <th>Quantité</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody id="form_set">
+
+                                {% for f in order_items_formset.forms %}
+                                    <tr>
+                                        <td>
+                                            {% render_field f.original_product class+="form-control form-control-sm" %}
+
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            {% render_field f.quantity class+="form-control form-control-sm" %}
+
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <div onclick="hide_item(this)">{% render_field f.DELETE %} {% render_field f.id %}
+                                                {% render_field f.order %}</div>
+                                            {% render_field f.id %}
+                                            {% render_field f.order %}
+
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            {% if order.status != "OS" and order.status != "D" %}
+
+                                <button type="button" class="btn btn-falcon-default btn-sm mt-2" id="add_more"><span
+                                        class="fas fa-plus fs--2 me-1" data-fa-transform="up-1"></span>Ajouter un item
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-header bg-light d-flex justify-content-between">
+                            <h5 class="mb-0">Notes d'activité</h5>
+                        </div>
+                        <div class="card-body fs--1 p-0 upper-notes">
+                            {% for note in notes %}
+
+                                <a class="border-bottom-0 notification rounded-0 border-x-0 border border-300">
+
+                                    <div class="notification-body" style="overflow:auto">
+                                        <p class="mb-1">
+                                            <strong>{{ note.user| default_if_none:"system" }}</strong> {{ note.note }}
+                                        </p>
+                                        <span class="notification-time">{{ note.created_at }}</span>
+
+                                    </div>
+                                </a>
+                            {% endfor %}
+
+                            <div class="border-bottom-0 notification rounded-0 border-x-0 border border-300">
+                                <label class="form-label center-block"
+                                       for="event-country">{{ request.user.get_full_name }}:</label>
+                                <textarea
+                                        class="form-control" id="textarea"></textarea>
+                                <input id="save_note" type="button" value="Save" class="btn btn-light"
+                                       style="margin-left:1% ;">
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 ps-lg-2">
+                    <div class="sticky-sidebar">
+                        <div class="card mb-lg-0">
+                            <div class="card-header">
+                                <h5 class="mb-0">Informations sur la commande</h5>
+                            </div>
+                            <div class="card-body bg-light">
+                                <div class="mb-3">
+                                    <div class=" flex-between-center">
+                                        <label class="form-label">Coût du produit: {{ order.total_price }} DT</label>
+                                        <br>
+                                        <label class="form-label">Coût d'expédition: {{ order.shipment_cost }} DT</label>
+                                        <br>
+                                        <label class="form-label">Total: {{ order.total }} DT</label>
+                                    </div>
+                                    <div class=" flex-between-center">
+                                        <label class="form-label" for="id_order_number">Numéro de commande:</label>
+                                        {% render_field form.order_number|append_attr:"readonly:readonly" class+="form-control" %}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class=" flex-between-center">
+                                        <label class="form-label">Statut:</label>
+                                        {% render_field form.status|append_attr:"readonly:readonly" class+="form-select" %}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class=" flex-between-center">
+                                        <label class="form-label" for="sponsors">sous-statut:</label>
+                                        {% render_field form.substatus|append_attr:"readonly:readonly" class+="form-select" %}
+                                    </div>
+                                </div>
+                                {% if order.status == "OS" or order.status == "D" %}
+
+                                    <div class="mb-3">
+                                        <div class=" flex-between-center">
+                                            <label class="form-label" for="sponsors">Suivi:</label>
+                                            <a style="color:blue" download="{{ order.order_number }}.png"
+                                               href="{{ shipment.label_url }}">{{ shipment.tracking_code }}</a>
+                                        </div>
+                                    </div>
+                                    {% for activitie in activities %}
+
+                                        <div class="card-body fs--1">
+                                            <div class="d-flex btn-reveal-trigger">
+                                                <div class="calendar"><span
+                                                        class="calendar-month">{{ activitie.happened_at|date:"M" }}</span><span
+                                                        class="calendar-day">{{ activitie.happened_at|date:"j" }}</span>
+                                                </div>
+                                                <div class="flex-1 position-relative ps-3">
+                                                    <p class="mb-1">Location: <a href="#!"
+                                                                                 class="text-700">{{ activitie.location }}</a>
+                                                    </p>
+                                                    <p class="text-1000 mb-0">
+                                                        Time: {{ activitie.happened_at|date:"P" }}</p>
+                                                    <p class="text-1000 mb-0">
+                                                        activity: {{ activitie.activity_type }}</p>
+                                                    <p class="text-1000 mb-0">{{ activitie.description }}</p>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="" class="row">
+            <div class="col">
+                {% if order.status != "OS" and order.status != "D" %}
+
+                    <input type="submit" name="save_data" class="btn btn-primary "
+                           value="Mise à jour">
+                {% endif %}
+                {% if 'orders.delete_order' in request.user.get_all_permissions %}
+                    <button type="button" class="btn" style="margin-left:1% ;" data-toggle="modal"
+                            data-dismiss="modal"
+                            data-target="#modal_pk_1" onclick="open_modal(this)">
+
+                        Supprimer
+
+                    </button>
+                {% endif %}
+
+                <a href="{% url "orders:order_logs" %}?id={{ order.id }}"> <input type="button"
+                                                                                  value="Instance logs" class="btn"
+                                                                                  style="margin-left:1% ;"></a>
+
+            </div>
+        </div>
+    </form>
+
+    <TABLE style="display:none">
+        <tbody id="empty_form">
+        <tr>
+            <td>
+                {% render_field order_items_formset.empty_form.original_product class+="form-control form-control-sm" %}
+            </td>
+            <td class="text-center align-middle">
+                {% render_field order_items_formset.empty_form.quantity class+="form-control form-control-sm" %}
+            </td>
+            <td class="text-center align-middle">
+                <div onclick="hide_item(this)">{{ order_items_formset.empty_form.DELETE }}</div>
+            </td>
+
+        </tr>
+        </tbody>
+    </TABLE>
+    <div class="modal" id="modal_pk_1" tabindex="-1" role="dialog"
+         aria-hidden="true" style=" color:black">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                       Êtes-vous sûr de vouloir supprimer cette commande/expédition ?
+                    </h5>
+                    <button type="button" class="close btn" data-dismiss="modal"
+                            data-target="#modal_pk_1"
+                            aria-label="Close" onclick="close_modal(this)">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="
+
+
+
+
+
+                            {% if order.status != "OS" and order.status != "D" %}{% url "orders:order_delete" pk=order.id|default_if_none:0 %}{% else %}{% url "orders:shipment_delete" pk=shipment.id|default:"0" %}{% endif %}">
+                        {% csrf_token %}
+                        <input type="submit" name="save_data"
+                               style=" background-margin-left:1% ;color:white" class="btn btn-primary"
+                               value="Confirm">
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block extrascript %}
+    {{ block.super }}
+    <script>
+        function hide_item(item) {
+            $(item).parent().parent().hide()
+        }
+
+        $('#add_more').click(function () {
+            var form_idx = $('#id_orderitems_set-TOTAL_FORMS').val();
+            $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+            $('#id_orderitems_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+        });
+
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            /* Centering the modal vertically */
+            function alignModal() {
+                var modalDialog = $(this).find(".modal-dialog");
+                modalDialog.css("margin-top", Math.max(0,
+                    ($(window).height() - modalDialog.height()) / 2));
+            }
+
+            $(".modal").on("shown.bs.modal", alignModal);
+
+            /* Resizing the modal according the screen size */
+            $(window).on("resize", function () {
+                $(".modal:visible").each(alignModal);
+            });
+        });
+    </script>
+    <script>
+        function close_modal(item) {
+            $($(item).data("target")).attr("style", "display:none")
+
+        }
+
+        function open_modal(item) {
+            console.log($(item).data("target"))
+            $($(item).data("target")).attr("style", "display:block")
+
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#id_zip_code").blur(function () {
+                $.ajax({
+                        type: 'GET',
+                        url: "{% url "orders:import_zipcode" %}",
+                        data: {
+                            "zipcode": $("#id_zip_code").val()
+                        }
+                    }
+                ).done(function (data) {
+                    console.log(data.address, "test", data.state, data.cite)
+                    $("#id_state").val(data.state)
+                    $("#id_cite").val(data.cite)
+
+                });
+            });
+            $("#save_note").click(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url "orders:save_internal_note" %}",
+                    data: {
+                        "note": $("#textarea").val(),
+                        "pk": "{{ order.id }}"
+                    }
+                }).done(function (data) {
+
+                        str = `<a class="border-bottom-0 notification rounded-0 border-x-0 border border-300">
+                                    <div class="notification-body" style="overflow:auto">
+                                        <p class="mb-1">
+                                            <strong>${data.user}</strong> ${data.Note}
+                                        </p>
+                                        <span class="notification-time">${data.created_at}</span>
+                                    </div>
+                                </a>`
+
+
+                        $(".upper-notes").prepend(str);
+                    }
+                );
+            });
+        });
+    </script>
+    {% if order.status == "OS" or order.status == "D" %}
+        <script>
+            $(document).ready(function () {
+                $(".form-control").attr("disabled", true)
+            })
+        </script>
+    {% endif %}
+{% endblock %}
+{% block title %} STORELINKERS| modifier la commande {% endblock title %}

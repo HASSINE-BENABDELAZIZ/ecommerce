@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" {% if not request.user.is_light %} class="dark control" {% endif %}>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title></title>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap"
+              rel="stylesheet">
+        <script>
+            var isRTL = JSON.parse(localStorage.getItem('isRTL'));
+            if (isRTL) {
+                var linkDefault = document.getElementById('style-default');
+                var userLinkDefault = document.getElementById('user-style-default');
+                linkDefault.setAttribute('disabled', true);
+                userLinkDefault.setAttribute('disabled', true);
+                document.querySelector('html').setAttribute('dir', 'rtl');
+            } else {
+                var linkRTL = document.getElementById('style-rtl');
+                var userLinkRTL = document.getElementById('user-style-rtl');
+                linkRTL.setAttribute('disabled', true);
+                userLinkRTL.setAttribute('disabled', true);
+            }
+        </script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                {{ order.code_a_barre }}
+            </div>
+            <div class="col-sm-6">
+                {{ order.tracking_code }}
+            </div>
+        </div>
+    </body>
+    <script>
+    $(function () {
+
+        $('.list-group-item').on('click', function () {
+            $('.glyphicon', this)
+                .toggleClass('glyphicon-chevron-right')
+                .toggleClass('glyphicon-chevron-down');
+        });
+
+        });
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
+</html>

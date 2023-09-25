@@ -1,0 +1,1 @@
+ celery  -A xmlfeed worker  --loglevel=INFO ;

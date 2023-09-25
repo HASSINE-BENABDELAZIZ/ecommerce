@@ -1,0 +1,48 @@
+{% if page_obj %}
+    <div class="table-responsive scrollbar">
+        <table class="table table-sm table-striped fs--1 mb-0 overflow-hidden">
+            <thead class="bg-200 text-900">
+            <tr>
+                <th class="sort pe-1 align-middle white-space-nowrap" data-sort="carrier">Transporteur</th>
+                <th class="sort pe-1 align-middle white-space-nowrap pe-7" data-sort="name">Nom</th>
+                <th class="sort pe-1 align-middle white-space-nowrap" data-sort="account_number">Numéro de compte</th>
+                <th class="sort pe-1 align-middle white-space-nowrap" data-sort="address">Adresse</th>
+                <th class="sort pe-1 align-middle white-space-nowrap" data-sort="status">Status</th>
+                <th class="pe-1 align-middle white-space-nowrap text-center"><span
+                        class="fas fa-ellipsis-h fs--1"></span>
+                </th>
+            </tr>
+            </thead>
+            <tbody class="list" id="table-produit-body">
+            {% for item in page_obj %}
+                <tr class="btn-reveal-trigger">
+                    <td class="carrier align-middle py-2"> {{ item.carrier }}</td>
+                    <td class="name align-middle py-2"> {{ item.name }}</td>
+                    <td class="account_number align-middle py-2"> {{ item.account_number }}</td>
+                    <td class="address align-middle py-2"> {{ item.sender_address.address_str }}</td>
+                    <td class="status align-middle py-2">
+                        {% if item.active %}
+                            <span class="badge badge-sm bg-gradient-success text-success">Active</span>
+                        {% else %}
+                            <span class="badge badge-sm bg-gradient-secondary text-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="align-middle white-space-nowrap py-2 text-center">
+                        {% if 'orders.change_carrier' in request.user.get_all_permissions %}
+                            <a href="{% url 'orders:change_carrier' item.id %}"
+                               class="btn btn-sm btn-falcon-secondary">
+                                <span class="far fa-edit"></span> Modifier
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <span class="text-muted fs--1 text-600 d-table mx-auto mt-3 mb-3">Aucune donnée disponible.</span>
+{% endif %}
+
+{% include 'pagination.html' %}
+

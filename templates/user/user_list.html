@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} STORELINKERS|Users {% endblock %}
+
+
+
+{% block extrastyle %}
+    <style>
+
+        .table {
+            display: table;
+            width: 100%;
+        }
+
+        .page-item.active .page-link {
+            z-index: 1;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.4) !important;
+            border-color: rgba(0, 0, 0, 0.4) !important;
+        }
+
+        .page-link:hover {
+            color: #0056b3 !important;
+
+            background-color: rgba(0, 0, 0, 0.4) !important;
+            border-color: rgba(0, 0, 0, 0.4) !important;
+        }
+
+        .btn:hover {
+            background: transparent
+        }
+
+        .rounded:placeholder-shown {
+            background: transparent
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container-fluid py-4">
+        <form method="get">
+            <div class=" ms-md-auto pe-md-3 d-flex align-items-center">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Type here..." name="search"
+                           placeholder="Search" aria-label="Search" id="searchbar"
+                           aria-describedby="search-addon">
+                </div>
+
+                <button type="submit" style="margin-left:1% ;" class="btn btn-secondary" onclick=submitButtonClick(event)>
+                    Recherche
+                </button>
+            </div>
+        </form>
+    <div style="top: 100px; margin-top:15rem; margin-left: 25px; position: absolute" id='loader'></div>
+        <br>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="row flex-between-center">
+                <div class="col-4 col-sm-auto d-flex align-items-center pe-0">
+                    <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Users</h5>
+                </div>
+                <div class="col-8 col-sm-auto ms-auto text-end ps-0">
+                    <div id="orders-actions">
+                        {% if 'accounts.add_user' in request.user.get_all_permissions %}
+                            <a href="{% url "accounts:user_create" %}" class="btn btn-falcon-default btn-sm"><span
+                                    class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span><span
+                                    class="d-none d-sm-inline-block ms-1">Nouveau</span></a>
+                        {% endif %}
+                        <a class="btn btn-falcon-default btn-sm mx-2" href="{% url "accounts:user_logs" %}"><span
+                                class="fas fa-filter" data-fa-transform="shrink-3 down-2"></span><span
+                                class="d-none d-sm-inline-block ms-1">Journaux</span></a>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar" id="add_message">
+                <div id="content">
+                    {% include "include/user_tr.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+<

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table, td, th {
+            border: 1px solid black;
+        }
+
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+        td {
+            width: 25%;
+  text-align: center;
+            vertical-align:center;
+            padding:1em;
+}
+        {% if status == "OS" %}
+
+        @page {
+            size: 384px 576px;
+            margin: 0;
+    @frame content_frame {
+    width: 384px;
+    height: 576px;}
+
+          }
+        {% endif %}
+    </style>
+</head>
+<body>
+{% if status == "OS" %}
+    <style>
+
+    </style>
+    {% for shipment in list %}
+        <img src="{{ shipment.label_url }}">
+        <pdf:nextpage/>
+    {% endfor %}
+    {% else %}
+
+<table>
+    <thead>
+    <tr>
+        <td>Sku</td>
+        <td>Name</td>
+        <td>quantity</td>
+        <td>stock</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for items in list %}
+        <tr>
+            <td>{{ items.sku }}</td>
+            <td>{{ items.name }}</td>
+            <td>{{ items.quantity }}</td>
+            <td>{{ items.stock }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+</body>
+</html>

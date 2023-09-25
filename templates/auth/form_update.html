@@ -1,0 +1,162 @@
+{% extends 'base.html'%}
+{% load static %}
+    {% block title %} STORELINKERS| change product {% endblock title %}
+{% load widget_tweaks  %}
+
+{% block extrastyle %}
+    <style>
+    ul, li {
+    margin:0;
+    padding:0;
+    list-style-type:none;
+}
+    form ul li {
+    margin:10px 20px;
+
+}
+
+.row {
+  display: flex; /* equal height of the children */
+}
+
+.col {
+  flex: 1; /* additionally, equal width */
+
+  padding: 1em;
+}
+
+            </style>
+                <link href="{% static "vendors/choices/choices.min.css" %}" rel="stylesheet"/>
+
+{% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb" >
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                  <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{% url "index" %}">Home</a></li>
+                  <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{% url "accounts:group_list" %}">Groups</a></li>
+                  <li class="breadcrumb-item text-sm text-dark active" aria-current="page">{{ group.name }}</li>
+
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+    <form id="myform" method="post"  >
+        {% csrf_token %}
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+  <div class="card mb-3">
+
+                        <div class="card-header">
+                            <h5 class="mb-0">Groups & Permissions</h5>
+                        </div>
+                        <div class="card-body bg-light">
+                            {% if "auth.add_group" in request.user.get_all_permissions %}
+
+                                <div class="col-lg-12">
+                                    <label class="form-label" for="last-name">Groups</label>
+                                    {% render_field form.name class="form-control" %}
+
+                                </div>
+                            {% endif %}
+
+                            {% if "auth.add_permission" in request.user.get_all_permissions %}
+
+                                <div class="col-lg-12">
+                                    <label class="form-label" for="last-name">Permissions</label>
+                                    {% render_field form.permissions class+="form-select js-choice" id="organizerMultiple" multiple="multiple" %}
+                                </div>
+
+                            {% endif %}
+                        </div>
+                    </div>
+<div style="" class="row">
+        <div class="col">
+
+
+              <input type="submit" name="save_data"  style="margin-left:1%" class="btn btn-primary" value="Mise à jour">
+                    <button type="button" class="btn" style="margin-left:1%" data-toggle="modal"
+                            data-dismiss="modal"
+                            data-target="#modal_pk_1" onclick="open_modal(this)">
+                        Supprimer
+                    </button>
+        </div>
+</div>
+</div>
+
+    </form>
+      <div class="modal" id="modal_pk_1" tabindex="-1" role="dialog"
+         aria-hidden="true" style=" color:black">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Voulez-vous vraiment supprimer ce group?</h5>
+                    <button type="button" class="close btn" data-dismiss="modal"
+                            data-target="#modal_pk_1"
+                            aria-label="Close" onclick="close_modal(this)">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url "accounts:group_delete" pk=group.id %}">
+                        {% csrf_token %}
+                        <input type="submit" name="save_data" style=" margin-left:1% " class="btn btn-primary"
+                               value="Confirm">
+                    </form>
+                </div>
+
+
+                <div class="modal-footer justify-content-between">
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+{% endblock %}
+{% block extrascript %}
+     <script src="{% static "vendors/choices/choices.min.js" %}"></script>
+
+        <script>
+        $('#myform').submit(function(e){
+
+    console.log("submitted");
+});
+
+	</script>
+            <script>
+        function close_modal(item) {
+            $($(item).data("target")).attr("style", "display:none")
+
+        }
+
+        function open_modal(item) {
+            console.log($(item).data("target"))
+            $($(item).data("target")).attr("style", "display:block")
+
+        }
+    </script>
+
+{% endblock %}

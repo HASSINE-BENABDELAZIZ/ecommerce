@@ -1,0 +1,64 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if request.GET.carrier == "FP" %}
+    <div class="row">
+        <h4>FP:</h4>
+        <div class="col">
+
+            <label>Username:</label>
+            {% render_field form.username class+="form-control" %}<br>
+        </div>
+        <div class="col">
+
+            <label>Password:</label>
+            {% render_field form.password class+="form-control" %}<br>
+        </div>
+    </div>
+{% endif %}
+
+{% if request.GET.carrier == "BEEZIT" %}
+    <div class="row">
+        <h4>BEEZIT:</h4>
+        <div class="col">
+
+            <label>Username:</label>
+            {% render_field form.username class+="form-control" %}<br>
+        </div>
+        <div class="col">
+
+            <label>Password:</label>
+            {% render_field form.password class+="form-control" %}<br>
+        </div>
+    </div>
+{% endif %}
+
+{% if request.GET.carrier == "COLISSIMO" %}
+    <div class="row">
+        <h4>COLISSIMO:</h4>
+        <div class="col">
+
+            <label>Username:</label>
+            {% render_field form.username class+="form-control" %}<br>
+        </div>
+        <div class="col">
+
+            <label>Password:</label>
+            {% render_field form.password class+="form-control" %}<br>
+        </div>
+    </div>
+{% endif %}
+{% if request.GET.carrier == "DROPPEX" %}
+    <div class="row">
+        <h4>Droppex:</h4>
+        <div class="col">
+            <label>Code API:</label>
+            {% render_field form.code_api class+="form-control" %}<br>
+        </div>
+        <div class="col">
+            <label>Clé API:</label>
+            {% render_field form.key_api class+="form-control" %}<br>
+        </div>
+    </div>
+{% endif %}
+

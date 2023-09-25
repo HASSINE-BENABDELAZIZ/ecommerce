@@ -1,0 +1,30 @@
+{% load static templatetags %}
+<nav aria-label="breadcrumb" >
+  <ol class="breadcrumb">
+
+  </ol>
+</nav>
+{% block extrascript %}
+    <script type="text/javascript">
+    var path= "{{ request.path }}".split("/");
+    var breadcrumb=$(".breadcrumb");
+    if (path.length==2)
+        breadcrumb.append("<li class=\"breadcrumb-item active\" aria-current=\"page\">home</li>");
+    else
+        breadcrumb.append("<li class=\"breadcrumb-item\"><a href=\""+"/"+"\">"+"home"+"</a></li>");
+    for ( var item=1 ; item<path.length-2;item++){
+
+        var item_path="/";
+        for (i=1;i<=item;i++){
+             item_path+=path[i]+"/"
+        }
+        console.log(item_path)
+        breadcrumb.append("<li class=\"breadcrumb-item\"><a href=\""+item_path+"\">"+path[item]+"</a></li>")
+    }
+    if (path[path.length-2])
+    breadcrumb.append("<li class=\"breadcrumb-item active\" aria-current=\"page\">"+path[path.length-2]+"</li>");
+
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
+{% load static %}
+
+{% block title %} STORELINKERS | Produits {% endblock title %}
+
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-3 ps-3">
+            <li class="breadcrumb-item">
+                <a href="{% block pathtitle %} {% url 'index' %} {% endblock %}">
+                    {% block breadtitle %} Home {% endblock %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {% block midtitle %}Produits{% endblock %}</li>
+        </ol>
+    </nav>
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="row flex-between-center">
+                <div class="col-4 col-sm-auto d-flex align-items-center pe-0">
+                    <div class="search-box float-right">
+                        <form class="position-relative show" method="get" aria-expanded="true"
+                              action="{% url 'products:product_list' %}">
+                            <input class="form-control search-input fuzzy-search" type="search"
+                                   placeholder="Search..." id="q_search" name="search"
+                                   aria-label="Search" value="{{ request.GET.search }}">
+                            <span class="fas fa-search search-box-icon"></span>
+                        </form>
+                        <div class="btn-close-falcon-container position-absolute end-0 top-50 translate-middle shadow-none">
+                            <button type="button" class="btn btn-link btn-close-falcon p-0" id="btn-reset"
+                                    aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8 col-sm-auto ms-auto text-end ps-0">
+                    <div id="orders-actions">
+                        {% if 'products.add_category' in request.user.get_all_permissions %}
+                            <a class="btn btn-falcon-default btn-sm mx-2" data-bs-toggle="modal"
+                               data-bs-target="#add_category" rel="modal:open">
+                                <span class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span> Catégorie
+                            </a>
+                        {% endif %}
+
+                        {% if 'products.add_subcategory' in request.user.get_all_permissions %}
+                            <a class="btn btn-falcon-default btn-sm mx-2" data-bs-toggle="modal"
+                               data-bs-target="#add_sub_category" rel="modal:open">
+                                <span class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span> Sous-Catégorie
+                            </a>
+                        {% endif %}
+
+                        {% if 'products.add_product' in request.user.get_all_permissions %}
+                            <a href="{% url "products:product_create" %}"
+                               class="btn btn-falcon-default btn-sm mx-2"><span class="fas fa-plus"
+                                                                                data-fa-transform="shrink-3 down-2"></span><span
+                                    class="d-none d-sm-inline-block ms-1">Nouveau</span></a>
+                        {% endif %}
+                        <a class="btn btn-falcon-default btn-sm mx-2" href="{% url "products:product_logs" %}"><span
+                                class="fas fa-filter" data-fa-transform="shrink-3 down-2"></span><span
+                                class="d-none d-sm-inline-block ms-1">Journaux</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body " id="product-card">
+            {% include "include/product_tr.html" %}
+        </div>
+        <div id='loader' class="my-5" style="display: none"></div>
+    </div>
+
+    <div class="modal fade" id="add_category" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ajouter Nouvelle Catégorie:</h5>
+                    <button class="btn-close btn btn-sm transition-base" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'products:category_create' %}">
+                    {% csrf_token %}
+                    <div class="modal-body mb-3">
+                        <div class="form-group">
+                            <label for="id_name">Nom du catégorie:</label>
+                            {% render_field category_form.name class+="form-control" id+="id_name" %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm" type="submit">Soumettre</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="add_sub_category" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ajouter Nouvelle Sous-Catégorie:</h5>
+                    <button class="btn-close btn btn-sm transition-base" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'products:subcategory_create' %}">
+                    {% csrf_token %}
+                    <div class="modal-body mb-3">
+                        <div class="form-group mb-3">
+                            <label for="id_category">Catégorie:</label>
+                            {% render_field subcategory_form.category class+="form-control" id+="id_category" %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_name">Nom du sous-catégorie:</label>
+                            {% render_field subcategory_form.name class+="form-control" id+="id_name" %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm" type="submit">Soumettre</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extrascript %}
+    <script>
+        var $q_search = $('#q_search');
+        var $_loader = $("#loader");
+        var $_product_card = $("#product-card");
+
+        $('body').on('keyup', '#q_search', function (e) {
+            if (e.keyCode === 12 || e.key === 'Enter') {
+                $_loader.show();
+                $_product_card.hide();
+
+                $.ajax({
+                    method: 'GET',
+                    data: {'search': $q_search.val()},
+                    url: '{% url "products:product_list" %}',
+                    success: function (page_obj) {
+                        $_loader.hide();
+                        $_product_card.html(page_obj)
+                        $_product_card.show();
+                    }
+                });
+            }
+            e.preventDefault();
+        })
+
+        $('#btn-reset').click(function () {
+            $q_search.val('');
+            window.location = '/product'
+        })
+    </script>
+{% endblock %}

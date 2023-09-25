@@ -1,0 +1,229 @@
+{% load i18n static %}
+<div class="table-responsive scrollbar card mb-3">
+    <table class="table table-bordered table-striped fs--1 mb-0">
+        <thead class="bg-200 text-900">
+        <tr>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">User {{ request.is_secure }}</th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Dossiers</th>
+            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Statut</th>
+            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Filtres</th>
+
+            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Commencé</th>
+            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Terminé à</th>
+
+            <th class="text-secondary opacity-7">Durée</th>
+                        <th class="text-secondary opacity-7">Arrêter/Reprendre</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for file in page_obj %}
+
+            <tr>
+                <td>
+                    {{ file.user }}
+                </td>
+                <td>
+                    {% if file.file_url %}
+                        <a class="btn" href="{{ file.file_url }}" id="export_url_{{ file.id }}"><i
+                                class="fas fa-file-csv"></i>csv</a>{% else %}
+                        None{% endif %}
+                </td>
+                <td id="export_status_{{ file.id }}">
+                    {% if file.status == "in queue" %}
+                        <span class="badge badge rounded-pill d-block badge-soft-secondary">En file d'attente<span
+                                class="ms-1 fas fa-ban" data-fa-transform="shrink-2"></span></span>
+                    {% elif file.status == "processing" %}
+                        <span class="badge badge rounded-pill d-block badge-soft-primary">Traitement {{ file.percentage|floatformat:2 }} %</span>
+                    {% elif file.status == "completed" %}
+                        <span class="badge badge rounded-pill d-block badge-soft-success">Complété<span
+                                class="ms-1 fas fa-check" data-fa-transform="shrink-2"></span></span>
+                        {% elif file.status == "paused" %}
+                        <span class="badge badge rounded-pill d-block badge-soft-danger">En pause<span
+                                class="ms-1 fas fa-circle" data-fa-transform="shrink-2"></span></span>
+                    {% else %}
+ <span class="badge badge rounded-pill d-block badge-soft-danger">Échoué<span
+                                class="ms-1 fas fa-circle" data-fa-transform="shrink-2"></span></span>
+                    {% endif %}
+                </td>
+                <td class="align-middle text-center text-sm">
+                    <div class="modal" id="modal_pk_{{ file.id }}" tabindex="-1" role="dialog"
+                         aria-hidden="true" style=" color:black">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">
+                                        erreurs de cette importation
+                                    </h5>
+                                    <button type="button" class="close btn" data-dismiss="modal"
+                                            data-target="#modal_pk_{{ file.id }}"
+                                            aria-label="Close" onclick="close_modal(this)">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    {% if file.filters %}
+                                        <table stype="color:white!important">
+                                            <tr>
+                                                <td><strong>Statut de la commande:</strong></td>
+                                                <td>{{ file.filters.order_status }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Intervalle de temps:</strong></td>
+                                                <td>{{ file.filters.creation_date_start }}
+                                                    -{{ file.filters.creation_date_finish }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Transporteur:</strong></td>
+                                                <td>{{ file.filters.carrier }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>État:</strong></td>
+                                                <td>{{ file.filters.state }}</td>
+                                            </tr>
+
+                                        </table>
+                                    {% endif %}
+                                </div>
+
+
+                                <div class="modal-footer justify-content-between">
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm" data-toggle="modal"
+                            data-dismiss="modal"
+                            data-target="#modal_pk_{{ file.id }}" onclick="open_modal(this)">
+
+                        Filtres
+
+                    </button>
+                </td>
+                <td>{{ file.created_at }}</td>
+                <td id="export_finished_{{ file.id }}">{{ file.finished_at }}</td>
+                <td id="export_duration_{{ file.id }}">
+                    {{ file.duration|floatformat:2 }}{% if file.duration %} secs {% endif %}</td>
+            <td id="export_button_{{ file.id }}"> {% if file.status == "paused" %}
+                <button class="btn btn-success me-1 mb-1" type="button" onclick="task_activity('{{ file.id }}','resume')">Reprend</button>
+                {% elif file.status == "completed" or file.status == "failed" %}
+                {% else %}
+                <button class="btn btn-danger me-1 mb-1" type="button" onclick="task_activity('{{ file.id }}','pause')">Pause</button>
+                 {% endif %}
+            </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function task_activity(id,status){
+             let url = "{% url "orders:resume_export" %}"
+             $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    "id": id,
+                    "status":status
+
+
+                },
+                headers: {'X-CSRFToken': "{{ csrf_token }}"}
+            }).done(function (data) {
+                let search = $("#searchbar").val();
+                let page = 1;
+                let url = "{{ request.get_full_path }}"
+                $("tbody").attr("class", "changelist-form");
+                $(".changelist-form").hide();
+                $("#loader").show();
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    data: {
+                        "page": page,
+                        "search": search,
+
+                    }
+
+                }).done(function (data) {
+                    $("#content").html("")
+                    $("#content").html(data)
+
+                    $("#loader").hide();
+
+                    (function ($) {
+                        $(document).ready(function () {
+                            $(".changelist-form").show();
+                            $("#loader").hide();
+                            $(".action-counter").hide();
+                        });
+                    })(window.jQuery);
+                })
+            });
+        }
+        function close_modal(item) {
+            $($(item).data("target")).attr("style", "display:none")
+
+        }
+
+        function open_modal(item) {
+            console.log($(item).data("target"))
+            $($(item).data("target")).attr("style", "display:block")
+
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            {% if request.is_secure %}
+            var socket = new WebSocket("wss://ws.storelinkers.com/export_status/");
+            {% else %}
+            var socket = new WebSocket("ws{% if request.is_secure %}s{% endif %}://"+window.location.host+"/export_status/");
+
+            {% endif %}
+            socket.onmessage = function (e) {
+                // On getting the message from the server
+                // Do the appropriate steps on each event.
+                let data = JSON.parse(e.data);
+                if (data.status == "processing") {
+                    $("#export_status_" + data.id).html(`<span class="badge badge rounded-pill d-block badge-soft-primary">Processing ${data.percentage.toFixed(2)} %</span>`);
+                    if ($("#export_button_"+data.id).html() != `<button class="btn btn-danger me-1 mb-1" type="button" onclick="task_activity('${ data.id }','pause')">Pause</button>` )
+                    $("#export_button_"+data.id).html(`<button class="btn btn-danger me-1 mb-1" type="button" onclick="task_activity('${ data.id }','pause')">Pause</button>`)
+                    }
+                    if (data.status == "completed"){
+                    $("#export_status_" + data.id).html(`<span class="badge badge rounded-pill d-block badge-soft-success">Completed<span
+                                class="ms-1 fas fa-check" data-fa-transform="shrink-2"></span></span>`);
+                    $("#export_url_"+data.id).attr("href",data.url)  ;
+                    $("#export_url_"+data.id).attr("href",data.url)  ;
+                    $("#export_duration_"+data.id).html(data.duration.toFixed(2)+" secs")  ;
+                    $("#export_finished_"+data.id).html(data.finished_at.replaceAll("PM","p.m"))
+                    $("#export_button_"+data.id).html("")
+
+
+                    }
+
+            }
+
+            /* Centering the modal vertically */
+            function alignModal() {
+                var modalDialog = $(this).find(".modal-dialog");
+                modalDialog.css("margin-top", Math.max(0,
+                    ($(window).height() - modalDialog.height()) / 2));
+            }
+
+            $(".modal").on("shown.bs.modal", alignModal);
+
+            /* Resizing the modal according the screen size */
+            $(window).on("resize", function () {
+                $(".modal:visible").each(alignModal);
+            });
+        });
+    </script>
+
+    <div class="pagination">
+        {% include "pagination.html" %}
+    </div>
+</div>

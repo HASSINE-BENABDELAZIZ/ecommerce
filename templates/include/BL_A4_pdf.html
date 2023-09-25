@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+<style>
+     /*@page {
+            size: A4;
+            margin: 0;
+        }*/
+     p {
+    text-align: justify;
+  }
+    div{
+
+            margin-top: 0;
+            padding: 0;
+            page-break-before: always;
+        }
+.custom-table {
+    border-collapse: collapse;
+
+  }
+.custom-table td p {
+    text-align: justify;
+}
+
+  .custom-table th, .custom-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+   .custom-table2 td {
+       padding: 2px;
+       text-align: left;
+   }
+
+
+  .custom-table th {
+
+  }
+
+  .custom-table tr:hover {
+    background-color: #f5f5f5;
+  }
+</style>
+        <script src="{% static 'js/datetime.js' %}"></script>
+
+</head>
+
+<body  onload="getCurrentDateTime()">
+    <!-- Content for Static Frame 'header_frame' -->
+
+
+    <!-- Content for Static Frame 'footer_frame' -->
+
+
+    <!-- HTML Content -->
+
+
+{% for order in orders %}
+<table class="custom-table2" border="1px" cellspacing="5">
+        <thead>
+        <tr>
+        <td colspan="2"> <p style="font-size:12px;"> <img src="C:\Users\MSI\Desktop\boujarrait-logistics-project-795e86ed1bec\static\images\img_4.png" width="200" height="45" alt="Description of the image"><br>MF: 1736403 M/A/M/000 </p> </td>
+            <td colspan="2"> <p style="font-size:20px;"> Bon de livraison N°: XXXXXXX</p></td>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr>
+
+           <td rowspan="1" colspan="2">
+                <p style="font-size:20px;">
+
+                    <strong>EXPÉDITEUR➔</strong><br>
+                    Nom: {{ order.marketplace.name }}<br>
+                    Téléphone: {{ order.marketplace.phone }}<br>
+                    Adresse: {{ order.marketplace.address }}
+                </p>
+            </td>
+            <td rowspan="1" colspan="2">
+                <p style="font-size:20px;">
+                    <strong>DESTINATAIRE➔</strong><br>
+                    Nom: {{ order.customer_name }} <br>
+                    Téléphone: {{ order.phone }}<br>
+                    Adresse: {{ order.client_address }}<br>
+                    Ville: {{ order.client_ville }}
+                </p>
+            </td>
+
+        </tr>
+
+        </tbody>
+    </table>
+<table border="1px" cellspacing="5">
+    <thead>
+    <tr>
+    <th><br>Remarque</th>
+    <th><br>Service</th>
+    <th><br>Date création</th>
+    <th><br> P.U.</th>
+    <th><br>Quantité</th>
+    <th><br>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr >
+        <td>{{ order.note }}<br></td>
+        <td><br>{{ order.t_service }}</td>
+        <td> <br>{{ order.created_at }}</td>
+        <th><br>{{ order.total_price }}</th>
+        <th><br>1</th>
+        <th><br>xxx</th>
+    </tr>
+    <tr>
+        <th colspan="4"><br>Référence (produit)</th>
+        <th><br>Total</th>
+        <th><br>{{ order.total_price }}</th>
+    </tr>
+    <tr>
+        <th rowspan="2" colspan="4"><br>XXXXXXXXX</th>
+        <th><br>TVA</th>
+        <th><br>19%</th>
+    </tr>
+     <tr>
+        <th><br>Total</th>
+        <th><br>{{ order.total }}</th>
+    </tr>
+    </tbody>
+</table>
+<table  border="3px" cellspacing="5">
+    <tr>
+        <th><p style="font-size:16px;"><br>Cachet/Signature<br><br></p></th>
+        <td > <b style="font-size:16px;">
+                     Fast parcel >> N°:<br><br>
+                    XXXXXXXX<br>
+
+                </b></td>
+    </tr>
+</table>
+    <hr>
+{% endfor %}
+<div>
+    <table>
+        <tbody>
+        <tr>
+            <th colspan="3" style=" font-size:15px;" >
+                <p>
+                MF:xxxxxxxxxxxxxxxxx<br>
+                TEL:99999999<br>
+                Adresse :Ave Yasser Arafet,Sousse,Tunisie<br>
+            </p>
+
+            </th>
+
+
+            <th colspan="3" style="font-size:13px;">
+                <p>Date de l'impression :<p/><p id="datetime"></p>
+                <p>Nombre de bon de livraison:<br>
+                </p>
+            </th>
+
+
+        </tr>
+        </tbody>
+    </table><br><br>
+<table  class="custom-table" border="1px" cellspacing="1" width="100%" height="1000px">
+<tbody>
+    <tr>
+          <th style="font-size:16px;">Code à bare</th>
+          <th style="font-size:16px;">Client</th>
+          <th style="font-size:16px;">Ville</th>
+          <th style="font-size:16px;">Adresse pickup</th>
+          <th colspan="2" style="font-size:16px;">Adresse client</th>
+          <th style="font-size:16px;">Service</th>
+          <th style="font-size:16px;">Statut</th>
+          <th style="font-size:16px;">COD</th>
+
+    </tr>
+</tbody>
+<thead>
+    {% for order in orders %}
+    <tr>
+
+         <td style="font-size:16px;">xxxxx</td>
+         <td style="font-size:16px;"><p>{{ order.customer_name }}</p></td>
+         <td style="font-size:16px;"><p>{{ order.client_ville }}</p></td>
+         <td style="font-size:16px;"><p>{{ order.marketplace.address }}</p></td>
+         <td colspan="2" style="font-size:16px;"><p>{{ order.client_address }}</p></td>
+         <td style="font-size:16px;">{{ order.t_service }}</td>
+         <td style="font-size:16px;">{{ order.status }}</td>
+         <td style="font-size:16px;">{{ order.total }}</td>
+
+
+    </tr>
+    {% endfor %}
+</thead>
+</table>
+    <br>
+    <br>
+
+
+<table>
+    <tr>
+        <td colspan="2" style="font-size:14px;"><p>Date collecte<br>
+          .................</p></td>
+        <td colspan="2" style="font-size:14px;"><p>Nom chauffeur<br>
+          .................</p></td>
+        <td colspan="2" style="font-size:14px;"><p>Signature client<br>
+          .................</p></td>
+        <td colspan="2" style="font-size:14px;"><p>Signature chauffeur<br>
+          .................</p></td>
+
+    </tr>
+
+</table>
+</div>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+server {
+        listen 80;
+        server_name 167.99.192.225;
+
+location /static{
+    root /home/Rupu/xml/first/static;
+}
+location / {
+    proxy_pass http://127.0.0.1:8000;
+
+
+}
+  }
